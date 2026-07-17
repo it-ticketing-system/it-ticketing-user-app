@@ -1,27 +1,10 @@
 @import 'tailwindcss';
 @import '@heroui/styles';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import '../styles/tokens.css';
+@import '../styles/heroui-theme.css';
+@import '../styles/heroui-components.css';
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-vazirmatn);
-  --font-latin: var(--font-geist-sans);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-vazirmatn), sans-serif;
+html {
+  scroll-behavior: smooth;
 }
