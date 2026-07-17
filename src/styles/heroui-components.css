@@ -1,0 +1,70 @@
+@layer components {
+  .button {
+    @apply gap-2 rounded-md transition duration-150 ease-out;
+
+    &.button--sm {
+      @apply h-8 px-3 text-button-sm;
+
+      &.button--icon-only {
+        @apply h-11 w-11 p-0;
+
+        @variant md {
+          @apply h-8 w-8;
+        }
+      }
+    }
+
+    &.button--md {
+      @apply h-10 px-4 text-button-md;
+
+      &.button--icon-only {
+        @apply h-11 w-11 p-0;
+
+        @variant md {
+          @apply h-10 w-10;
+        }
+      }
+    }
+
+    &.button--lg {
+      @apply h-12 px-5 text-button-lg;
+
+      &.button--icon-only {
+        @apply h-12 w-12 p-0;
+      }
+    }
+
+    &[data-hovered='true'],
+    &:hover {
+      @apply -translate-y-px;
+    }
+
+    &[data-pressed='true'],
+    &:active {
+      @apply scale-[0.97];
+    }
+
+    &[data-pending] {
+      @apply cursor-wait;
+      transform: none;
+    }
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      @apply opacity-40;
+      transform: none;
+    }
+  }
+
+  .button.button--sm > svg.lucide {
+    @apply size-[14px] shrink-0;
+  }
+
+  .button.button--md > svg.lucide {
+    @apply size-4 shrink-0;
+  }
+
+  .button.button--lg > svg.lucide {
+    @apply size-[18px] shrink-0;
+  }
+}
