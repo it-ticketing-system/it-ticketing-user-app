@@ -3,7 +3,7 @@
     @apply gap-2 rounded-md transition duration-150 ease-out;
 
     &.button--sm {
-      @apply h-8 px-3 text-button-sm;
+      @apply text-button-sm h-8 px-3;
 
       &.button--icon-only {
         @apply h-11 w-11 p-0;
@@ -15,7 +15,7 @@
     }
 
     &.button--md {
-      @apply h-10 px-4 text-button-md;
+      @apply text-button-md h-10 px-4;
 
       &.button--icon-only {
         @apply h-11 w-11 p-0;
@@ -27,7 +27,7 @@
     }
 
     &.button--lg {
-      @apply h-12 px-5 text-button-lg;
+      @apply text-button-lg h-12 px-5;
 
       &.button--icon-only {
         @apply h-12 w-12 p-0;

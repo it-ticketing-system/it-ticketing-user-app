@@ -41,7 +41,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${vazirmatn.variable} light`}
       data-theme="light"
     >
-      <body className="min-h-dvh flex flex-col antialiased">
+      <body className="flex min-h-dvh flex-col antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

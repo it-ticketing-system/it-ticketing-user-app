@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "title": "سامانه تیکتینگ",
+    "description": "مدیریت هوشمند درخواست‌های پشتیبانی"
+  },
+  "quickLinks": {
+    "title": "دسترسی سریع",
+    "ariaLabel": "دسترسی سریع",
+    "items": {
+      "home": "خانه",
+      "contactUs": "تماس با ما"
+    }
+  },
+  "resources": {
+    "title": "منابع",
+    "ariaLabel": "منابع",
+    "items": {
+      "guide": "راهنما",
+      "faq": "سوالات متداول"
+    }
+  },
+  "contact": {
+    "title": "اطلاعات تماس",
+    "phone": "۰۲۱-۱۲۳۴۵۶۷۸",
+    "email": "info@ticketing.ir"
+  },
+  "copyright": "© ۱۴۰۵ سامانه تیکتینگ — تمامی حقوق محفوظ است."
+}
