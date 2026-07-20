@@ -63,17 +63,16 @@ const AllInOneOverview = () => {
               ))}
             </div>
           </div>
-
           <DImage
             alt={t('imageAlt')}
-            className="h-auto w-full max-w-187.5 object-contain lg:max-h-130 lg:max-w-full"
+            className="h-auto w-[70%] max-w-80 object-contain sm:max-w-96 lg:max-h-130 lg:w-full lg:max-w-full"
             pictureClassName="flex w-full min-w-0 items-center justify-center lg:w-1/2"
             sources={{
               default: {
                 src: '/hero/hero-mobile.png',
                 width: 1086,
                 height: 1448,
-                sizes: '80vw',
+                sizes: '70vw',
               },
               variants: [
                 {

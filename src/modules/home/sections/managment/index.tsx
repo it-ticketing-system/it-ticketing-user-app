@@ -41,7 +41,7 @@ const Management = () => {
         }}
       />
 
-      <div className="relative mx-auto grid h-full w-full max-w-7xl grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 sm:px-5 md:px-6 lg:grid-cols-2 lg:grid-rows-[auto_auto] lg:content-center lg:gap-x-6 lg:gap-y-4 lg:px-8 xl:gap-x-10 xl:gap-y-6">
+      <div className="relative mx-auto grid h-full w-full max-w-7xl grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 pt-4 sm:px-5 md:px-6 lg:grid-cols-2 lg:grid-rows-[auto_auto] lg:content-center lg:gap-x-6 lg:gap-y-4 lg:px-8 lg:pt-0 xl:gap-x-10 xl:gap-y-6">
         <div className="col-start-1 row-start-1 flex w-full flex-col items-center gap-3 text-center lg:items-start lg:self-end lg:text-right xl:max-w-xl xl:gap-6">
           <h1 id="management-hero-title" className="text-h2">
             {t('title')}
@@ -73,7 +73,7 @@ const Management = () => {
 
         <DImage
           alt={t('heroImageAlt')}
-          className="h-full min-h-0 w-full max-w-162.5 object-contain lg:h-auto lg:max-h-[min(490px,calc(100svh-120px))] lg:max-w-full xl:max-h-122.5"
+          className="h-auto w-[75%] max-w-80 object-contain sm:max-w-96 lg:max-h-[min(490px,calc(100svh-120px))] lg:w-full lg:max-w-full xl:max-h-122.5"
           pictureClassName="
             col-start-1 row-start-2
             flex min-h-0 w-full min-w-0 items-center justify-center
