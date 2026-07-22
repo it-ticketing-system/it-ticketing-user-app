@@ -1,0 +1,29 @@
+{
+  "toast": {
+    "successTitle": "عملیات موفق",
+    "successDescription": "عملیات با موفقیت انجام شد",
+    "errorTitle": "خطا"
+  },
+
+  "errors": {
+    "generic": "در انجام عملیات خطایی رخ داده است.",
+    "network": "ارتباط با سرور برقرار نشد.",
+    "unauthorized": "نشست شما منقضی شده است. لطفاً دوباره وارد شوید.",
+    "forbidden": "شما اجازه انجام این عملیات را ندارید.",
+    "server": "خطایی در سرور رخ داده است. لطفاً دوباره تلاش کنید.",
+    "validation": "اطلاعات واردشده معتبر نیست.",
+    "invalidCredentials": "نام کاربری یا رمز عبور صحیح نیست.",
+    "usernameAlreadyExists": "این نام کاربری قبلاً استفاده شده است.",
+    "currentPasswordIncorrect": "رمز عبور فعلی صحیح نیست.",
+    "passwordConfirmationMismatch": "رمز عبور جدید و تکرار آن مطابقت ندارند.",
+    "tokenInvalidated": "نشست شما منقضی شده است. لطفاً دوباره وارد شوید.",
+    "invalidFileType": "نوع فایل انتخاب‌شده مجاز نیست.",
+    "departmentNotFound": "دپارتمان موردنظر پیدا نشد.",
+    "ticketNotFound": "تیکت موردنظر پیدا نشد.",
+    "ticketClosed": "امکان ارسال پیام برای تیکت بسته‌شده وجود ندارد.",
+    "actionNotAllowed": "امکان انجام این عملیات برای شما وجود ندارد.",
+    "invalidStatusTransition": "تغییر وضعیت انتخاب‌شده مجاز نیست.",
+    "supportNotInDepartment": "پشتیبان انتخاب‌شده عضو این دپارتمان نیست.",
+    "departmentNameAlreadyExists": "دپارتمانی با این نام قبلاً ایجاد شده است."
+  }
+}
