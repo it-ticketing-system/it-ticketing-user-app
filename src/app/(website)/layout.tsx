@@ -1,7 +1,6 @@
 import { WebsiteLayout } from '@/layouts';
-import { FC } from 'react';
 
-const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
+const Layout: FCC = ({ children }) => {
   return <WebsiteLayout>{children}</WebsiteLayout>;
 };
 

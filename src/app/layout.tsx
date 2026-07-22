@@ -1,9 +1,8 @@
-import type { Metadata } from 'next';
-import { Geist, Vazirmatn } from 'next/font/google';
-
 import './globals.css';
-import Providers from '@/providers';
+import { Geist, Vazirmatn } from 'next/font/google';
 import { getTranslations } from 'next-intl/server';
+import Providers from '@/providers';
+import type { Metadata } from 'next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

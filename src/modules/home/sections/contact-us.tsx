@@ -1,8 +1,8 @@
-import DImage from '@/components/shared/image';
-import { BREAKPOINTS } from '@/constants';
 import { Button } from '@heroui/react';
 import { PhoneIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import DImage from '@/components/shared/image';
+import { BREAKPOINTS } from '@/constants';
 
 const ContactUs = () => {
   const t = useTranslations('home.contactUs');

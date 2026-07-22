@@ -1,8 +1,7 @@
-import { FC } from 'react';
-import WebsiteHeader from './website-header';
 import WebsiteFooter from './website-footer';
+import WebsiteHeader from './website-header';
 
-const WebsiteLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
+const WebsiteLayout: FCC = ({ children }) => {
   return (
     <div>
       <WebsiteHeader />

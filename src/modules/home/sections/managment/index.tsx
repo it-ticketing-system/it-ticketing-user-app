@@ -1,7 +1,7 @@
-import DImage from '@/components/shared/image';
-import { BREAKPOINTS } from '@/constants';
 import { CircleCheckBig } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import DImage from '@/components/shared/image';
+import { BREAKPOINTS } from '@/constants';
 import HeroActions from './hero-actions';
 
 const featureKeys = ['security', 'fastResponse', 'analytics'] as const;

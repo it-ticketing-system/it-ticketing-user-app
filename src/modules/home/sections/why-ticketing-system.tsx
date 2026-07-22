@@ -1,4 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
 
 import {
   BarChart3Icon,
@@ -9,6 +8,7 @@ import {
   ZapIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import type { LucideIcon } from 'lucide-react';
 
 interface IFeatureCard {
   title: string;

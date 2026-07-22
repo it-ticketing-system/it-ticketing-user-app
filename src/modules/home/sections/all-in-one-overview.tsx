@@ -1,5 +1,3 @@
-import DImage from '@/components/shared/image';
-import { BREAKPOINTS } from '@/constants';
 import {
   CircleCheckBig,
   LayoutDashboardIcon,
@@ -7,6 +5,8 @@ import {
   UsersRoundIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import DImage from '@/components/shared/image';
+import { BREAKPOINTS } from '@/constants';
 
 const features = [
   {
