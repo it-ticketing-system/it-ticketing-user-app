@@ -1,7 +1,7 @@
-import { Logo } from '@/components/shared';
 import { MailIcon, PhoneIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Logo } from '@/components/shared';
 
 const quickLinks = [
   {

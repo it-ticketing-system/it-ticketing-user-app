@@ -1,4 +1,5 @@
 import { FC, PropsWithChildren } from 'react';
+import auth from './messages/fa/auth.json';
 import common from './messages/fa/common.json';
 import footer from './messages/fa/footer.json';
 import header from './messages/fa/header.json';
@@ -11,6 +12,7 @@ type Messages = {
   home: typeof home;
   footer: typeof footer;
   common: typeof common;
+  auth: typeof auth;
 };
 
 declare module 'next-intl' {
@@ -20,4 +22,5 @@ declare module 'next-intl' {
 }
 declare global {
   type FCC<P = object> = FC<PropsWithChildren<P>>;
+  type UserRole = 'USER' | 'SUPPORT' | 'ADMIN';
 }

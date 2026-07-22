@@ -1,22 +1,29 @@
-import { Logo } from '@/components/shared';
-import { Button } from '@heroui/react';
+import { buttonVariants, Link } from '@heroui/react';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Logo } from '@/components/shared';
+import { ROUTES } from '@/constants';
 
 const WebsiteHeader = () => {
   const t = useTranslations('header');
 
   return (
     <header className="bg-surface mx-auto flex h-14 max-w-7xl items-center justify-between border-b px-4 sm:px-5 md:px-6 lg:px-8 xl:h-16">
-      <Link href="/" className="flex items-center gap-2">
+      <Link href={ROUTES.home} className="flex items-center gap-2 no-underline">
         <Logo />
         <span className="text-h3">{t('title')}</span>
       </Link>
 
       <div className="flex gap-2">
-        <Button variant="outline">{t('actions.login')}</Button>
+        <Link
+          href={ROUTES.login}
+          className={buttonVariants({ variant: 'outline' })}
+        >
+          {t('actions.login')}
+        </Link>
 
-        <Button>{t('actions.register')}</Button>
+        <Link href={ROUTES.register} className={buttonVariants()}>
+          {t('actions.register')}
+        </Link>
       </div>
     </header>
   );
