@@ -61,7 +61,7 @@ const LoginModule = () => {
       }),
 
     onSuccess: () => {
-      router.push('/pwa');
+      router.push(ROUTES.app);
     },
   });
 
