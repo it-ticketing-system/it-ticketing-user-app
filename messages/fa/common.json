@@ -1,4 +1,8 @@
 {
+  "brand": {
+    "appName": "سامانه تیکتینگ"
+  },
+
   "toast": {
     "successTitle": "عملیات موفق",
     "successDescription": "عملیات با موفقیت انجام شد",

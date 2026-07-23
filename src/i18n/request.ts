@@ -5,6 +5,7 @@ import footer from '../../messages/fa/footer.json';
 import header from '../../messages/fa/header.json';
 import home from '../../messages/fa/home.json';
 import main_layout from '../../messages/fa/main-layout.json';
+import pwa_layout from '../../messages/fa/pwa-layout.json';
 
 export default getRequestConfig(async () => {
   return {
@@ -17,6 +18,7 @@ export default getRequestConfig(async () => {
       footer,
       auth,
       common,
+      pwa_layout,
     },
   };
 });

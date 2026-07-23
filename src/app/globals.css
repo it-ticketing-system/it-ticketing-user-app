@@ -8,3 +8,8 @@
 html {
   scroll-behavior: smooth;
 }
+
+html,
+body {
+  direction: rtl;
+}
