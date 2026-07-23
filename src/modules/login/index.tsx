@@ -61,7 +61,7 @@ const LoginModule = () => {
       }),
 
     onSuccess: () => {
-      router.push(ROUTES.app);
+      router.push(ROUTES.tickets);
     },
   });
 
