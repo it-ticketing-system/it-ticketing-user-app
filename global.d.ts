@@ -5,9 +5,11 @@ import footer from './messages/fa/footer.json';
 import header from './messages/fa/header.json';
 import home from './messages/fa/home.json';
 import main_layout from './messages/fa/main-layout.json';
+import pwa_layout from './messages/fa/pwa-layout.json';
 
 type Messages = {
   main_layout: typeof main_layout;
+  pwa_layout: typeof pwa_layout;
   header: typeof header;
   home: typeof home;
   footer: typeof footer;

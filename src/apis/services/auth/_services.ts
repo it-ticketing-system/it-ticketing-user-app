@@ -1,5 +1,6 @@
 import { ApiRequestFunction } from '@/apis/core/types/api-request.types';
 import { AuthUserModel } from '@/models';
+import { IUser } from '@/models/user';
 import {
   LoginRequestDto,
   LoginResponseDto,
@@ -40,8 +41,8 @@ export function createAuthServices(request: ApiRequestFunction) {
     };
   }
 
-  async function getMe(signal?: AbortSignal): Promise<AuthUserModel> {
-    return request<AuthUserModel>({
+  async function getMe(signal?: AbortSignal): Promise<IUser> {
+    return request<IUser>({
       url: AUTH_ENDPOINTS.me,
       method: 'GET',
       signal,

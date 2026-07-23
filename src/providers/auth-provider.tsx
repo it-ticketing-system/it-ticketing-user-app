@@ -1,11 +1,16 @@
 'use client';
 
-import { type PropsWithChildren, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo, useState } from 'react';
 import { authServices } from '@/apis/services/auth/client';
+import { ROUTES } from '@/constants';
 import { AuthContext } from '@/contexts/auth-context';
 import { useGetRequest } from '@/hooks';
 
-const AuthProvider = ({ children }: PropsWithChildren) => {
+const AuthProvider: FCC = ({ children }) => {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const {
     data: user,
     error,
@@ -19,7 +24,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   });
 
   const isUnauthenticated = error?.status === 401;
-  const isAuthenticated = user !== null && !isUnauthenticated;
+  const isAuthenticated = Boolean(user) && !isUnauthenticated;
 
   const status = useMemo(() => {
     if (isLoading) {
@@ -41,6 +46,18 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     return 'loading' as const;
   }, [isLoading, isUnauthenticated, isAuthenticated, error]);
 
+  const logout = useCallback(async () => {
+    try {
+      setIsLoggingOut(true);
+      await authServices.logout();
+      reset();
+
+      router.replace(ROUTES.login);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, [reset, router]);
+
   const value = useMemo(
     () => ({
       user,
@@ -49,9 +66,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       isUnauthenticated,
       isLoading,
       isFetching,
+      isLoggingOut,
       error,
       refresh: refetch,
       reset,
+      logout,
     }),
     [
       user,
@@ -60,9 +79,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       isUnauthenticated,
       isLoading,
       isFetching,
+      isLoggingOut,
       error,
       refetch,
       reset,
+      logout,
     ],
   );
 

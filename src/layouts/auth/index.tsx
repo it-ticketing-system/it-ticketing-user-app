@@ -1,8 +1,18 @@
-import { useTranslations } from 'next-intl';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { DImage } from '@/components/shared';
+import { AUTH_COOKIE_NAME, ROUTES } from '@/constants';
 
-const AuthLayout: FCC = ({ children }) => {
-  const t = useTranslations('auth.layout');
+const AuthLayout: FCC = async ({ children }) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+
+  if (accessToken) {
+    redirect(ROUTES.tickets);
+  }
+
+  const t = await getTranslations('auth.layout');
 
   return (
     <main className="bg-background mx-auto min-h-dvh w-full max-w-7xl px-4 py-6 sm:px-5 md:px-6 lg:px-8">

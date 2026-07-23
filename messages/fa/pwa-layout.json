@@ -1,0 +1,20 @@
+{
+  "appHeader": {
+    "greeting": "سلام {name}",
+    "user": "کاربر",
+    "tickets": "تیکت‌ها",
+    "notifications": "اعلان‌ها",
+    "profile": "پروفایل",
+    "logout": "خروج از حساب",
+    "mainNavigation": "منوی اصلی",
+    "profileMenu": "منوی کاربری",
+    "openProfileMenu": "باز کردن منوی کاربری"
+  },
+  "bottomNavigation": {
+    "navigation": "منوی اصلی",
+    "tickets": "تیکت‌ها",
+    "createTicket": "ایجاد تیکت",
+    "notifications": "اعلان‌ها",
+    "profile": "پروفایل"
+  }
+}

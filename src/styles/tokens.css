@@ -108,6 +108,10 @@
   --text-button-lg--line-height: 22px;
   --text-button-lg--font-weight: 600;
 
+  --text-badge: 11px;
+  --text-badge--line-height: 14px;
+  --text-badge--font-weight: 700;
+
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
   --breakpoint-sm: 23.4375rem; /* 375px */
