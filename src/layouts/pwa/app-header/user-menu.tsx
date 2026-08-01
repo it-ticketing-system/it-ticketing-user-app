@@ -4,8 +4,9 @@ import { Avatar, Button, Dropdown, Label, Separator } from '@heroui/react';
 import { ChevronDown, LogOut, UserRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ROUTES } from '@/constants';
-import useAuth from '@/hooks/use-auth';
+import { ICON_SIZE_CLASS, ROUTES } from '@/constants';
+import { useAuth } from '@/hooks';
+import { cn } from '@/utils';
 import type { Key } from 'react';
 
 const getUserInitials = (name: string) => {
@@ -22,7 +23,7 @@ const getUserInitials = (name: string) => {
 };
 
 const UserMenu = () => {
-  const t = useTranslations('pwa_layout.appHeader');
+  const t = useTranslations('pwaLayout.appHeader');
   const router = useRouter();
   const { user, isLoggingOut, logout } = useAuth();
 
@@ -70,8 +71,7 @@ const UserMenu = () => {
         </span>
 
         <ChevronDown
-          className="text-muted hidden size-4 shrink-0 lg:block"
-          strokeWidth={2}
+          className={cn('text-muted hidden shrink-0 lg:block', ICON_SIZE_CLASS.sm)}
         />
       </Button>
 
@@ -85,7 +85,9 @@ const UserMenu = () => {
           dir="rtl"
         >
           <Dropdown.Item id="profile" textValue={t('profile')}>
-            <UserRound className="size-5" strokeWidth={2} />
+            <UserRound
+              className={ICON_SIZE_CLASS.md}
+            />
             <Label>{t('profile')}</Label>
           </Dropdown.Item>
 
@@ -97,7 +99,9 @@ const UserMenu = () => {
             variant="danger"
             isDisabled={isLoggingOut}
           >
-            <LogOut className="size-5" strokeWidth={2} />
+            <LogOut
+              className={ICON_SIZE_CLASS.md}
+            />
             <Label>{t('logout')}</Label>
           </Dropdown.Item>
         </Dropdown.Menu>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Logo } from '@/components/shared';
-import { ROUTES } from '@/constants';
+import { ICON_SIZE_CLASS, ROUTES } from '@/constants';
 import { cn } from '@/utils';
 import {
   getPwaPageHeaderConfig,
@@ -45,13 +45,16 @@ const PageHeaderAction = ({ action, label }: PageHeaderActionProps) => {
       )}
     >
       <span className="hidden lg:inline">{label}</span>
-      <Icon aria-hidden="true" className="size-5 shrink-0" />
+      <Icon
+        aria-hidden="true"
+        className={cn(ICON_SIZE_CLASS.md, 'shrink-0')}
+      />
     </Link>
   );
 };
 
 const AppHeader = ({ unreadNotificationsCount = 1000 }: AppHeaderProps) => {
-  const t = useTranslations('pwa_layout.appHeader');
+  const t = useTranslations('pwaLayout.appHeader');
   const tCommon = useTranslations('common');
   const tPageHeader = useTranslations('pageHeader');
 

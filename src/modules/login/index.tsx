@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { clientAuthServices } from '@/apis/services/auth/client';
+import { PasswordField } from '@/components/shared';
 import { QUERY_KEYS, ROUTES } from '@/constants';
 import { usePostRequest } from '@/hooks';
 import { createLoginSchema, type LoginFormValues } from './login.schema';
@@ -48,7 +49,8 @@ const LoginModule = () => {
       password: '',
     },
 
-    mode: 'onSubmit',
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
   });
 
   const { mutateAsync: login, isPending } = usePostRequest<
@@ -99,18 +101,15 @@ const LoginModule = () => {
           <FieldError>{errors.username?.message}</FieldError>
         </TextField>
 
-        <TextField fullWidth isInvalid={Boolean(errors.password)}>
-          <Label>{t('fields.password.label')}</Label>
-
-          <Input
-            {...register('password')}
-            type="password"
-            autoComplete="current-password"
-            placeholder={t('fields.password.placeholder')}
-          />
-
-          <FieldError>{errors.password?.message}</FieldError>
-        </TextField>
+        <PasswordField
+          label={t('fields.password.label')}
+          placeholder={t('fields.password.placeholder')}
+          registration={register('password')}
+          error={errors.password?.message}
+          autoComplete="current-password"
+          showPasswordLabel={t('fields.password.show')}
+          hidePasswordLabel={t('fields.password.hide')}
+        />
       </div>
 
       <div className="flex w-full flex-col gap-3">

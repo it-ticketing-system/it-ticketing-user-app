@@ -80,11 +80,52 @@
     @apply text-body-sm border-border bg-surface text-foreground h-11 rounded-md border px-3 shadow-none placeholder:text-neutral-400;
   }
 
-  .search-field {
-    @apply gap-2;
+  .input-group {
+    @apply text-body-sm border-border bg-surface text-foreground h-11 min-h-11 rounded-md border shadow-none;
 
+    border-width: var(--border-width-field);
+    border-color: var(--field-border);
+
+    &.input-group--secondary {
+      @apply bg-surface;
+
+      --input-group-bg: var(--surface);
+      --input-group-bg-hover: var(--surface);
+      --input-group-bg-focus: var(--surface);
+    }
+
+    .input-group__input {
+      @apply text-body-sm min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-2 text-start shadow-none outline-none placeholder:text-neutral-400;
+    }
+
+    &:has([data-slot='input-group-suffix']) {
+      .input-group__input {
+        @apply ps-3 pe-0;
+      }
+    }
+
+    .input-group__suffix {
+      @apply text-muted flex h-full shrink-0 items-center border-0 px-1;
+    }
+
+    .input-group__suffix .button,
+    .input-group__suffix button,
+    .input-group__suffix .button.button--sm.button--icon-only {
+      @apply size-9 min-w-9 rounded-md p-0;
+      transform: none;
+    }
+
+    .input-group__suffix .button:hover,
+    .input-group__suffix .button[data-hovered='true'],
+    .input-group__suffix .button:active,
+    .input-group__suffix .button[data-pressed='true'] {
+      transform: none;
+    }
+  }
+
+  .search-field {
     .search-field__group {
-      @apply text-body-sm border-border bg-surface text-foreground w-full rounded-md border shadow-none;
+      @apply text-body-sm border-border bg-surface text-foreground w-full gap-0 rounded-md border px-2 shadow-none;
 
       height: 2.75rem !important;
       min-height: 2.75rem !important;
@@ -93,7 +134,7 @@
     }
 
     .search-field__search-icon {
-      @apply pointer-events-none flex size-11 shrink-0 items-center justify-center text-neutral-400;
+      @apply pointer-events-none flex size-6 shrink-0 items-center justify-center text-neutral-400;
     }
 
     .search-field__input {

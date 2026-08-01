@@ -1,5 +1,6 @@
 import { Button } from '@heroui/react';
 import { FileText, Trash2 } from 'lucide-react';
+import { ICON_SIZE_CLASS } from '@/constants';
 import { formatFileSize } from '@/utils';
 
 interface SelectedFilesListProps {
@@ -20,14 +21,14 @@ const SelectedFilesList = ({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2 overflow-hidden">
       {files.map((file, index) => (
         <div
           key={`${file.name}-${file.lastModified}`}
-          className="border-border bg-surface flex min-h-14 items-center gap-3 rounded-lg border p-3"
+          className="border-border bg-surface flex min-h-14 min-w-0 items-center gap-3 overflow-hidden rounded-lg border p-3"
         >
           <div className="bg-accent-soft text-accent flex size-9 shrink-0 items-center justify-center rounded-md">
-            <FileText aria-hidden="true" className="size-5" />
+            <FileText aria-hidden="true" className={ICON_SIZE_CLASS.md} />
           </div>
 
           <div className="min-w-0 flex-1">

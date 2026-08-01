@@ -1,8 +1,8 @@
 import { Button } from '@heroui/react';
 import { PhoneIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import DImage from '@/components/shared/image';
-import { BREAKPOINTS } from '@/constants';
+import { DImage } from '@/components/shared';
+import { BREAKPOINTS, ICON_SIZE_CLASS } from '@/constants';
 
 const ContactUs = () => {
   const t = useTranslations('home.contactUs');
@@ -68,7 +68,7 @@ const ContactUs = () => {
               fullWidth
               className="border-primary-200 text-primary-500 h-10 shrink-0 bg-white sm:h-11 lg:w-auto lg:min-w-36 lg:px-5"
             >
-              <PhoneIcon size={18} strokeWidth={2} />
+              <PhoneIcon className={ICON_SIZE_CLASS.md} />
               {t('action')}
             </Button>
           </div>

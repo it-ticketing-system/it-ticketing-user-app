@@ -2,6 +2,7 @@ import { MailIcon, PhoneIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Logo } from '@/components/shared';
+import { ICON_SIZE_CLASS } from '@/constants';
 
 const quickLinks = [
   {
@@ -104,8 +105,7 @@ const Footer = () => {
                 className="text-caption hover:text-primary-500 flex w-fit items-center gap-2 text-neutral-500 transition-colors duration-150"
               >
                 <PhoneIcon
-                  className="text-primary-500 size-4 shrink-0"
-                  strokeWidth={2}
+                  className={`text-primary-500 ${ICON_SIZE_CLASS.sm} shrink-0`}
                 />
 
                 <span dir="ltr">{t('contact.phone')}</span>
@@ -116,8 +116,7 @@ const Footer = () => {
                 className="text-caption hover:text-primary-500 flex w-fit items-center gap-2 text-neutral-500 transition-colors duration-150"
               >
                 <MailIcon
-                  className="text-primary-500 size-4 shrink-0"
-                  strokeWidth={2}
+                  className={`text-primary-500 ${ICON_SIZE_CLASS.sm} shrink-0`}
                 />
 
                 <span dir="ltr">{t('contact.email')}</span>

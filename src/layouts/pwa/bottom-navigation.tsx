@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { ICON_SIZE_CLASS } from '@/constants';
 import { cn } from '@/utils';
 import {
   isRouteActive,
@@ -11,7 +12,7 @@ import {
 } from './shared';
 
 const BottomNavigation = () => {
-  const t = useTranslations('pwa_layout.bottomNavigation');
+  const t = useTranslations('pwaLayout.bottomNavigation');
 
   const pathname = usePathname();
 
@@ -37,7 +38,9 @@ const BottomNavigation = () => {
                   isActive ? 'text-accent' : 'text-muted'
                 } `}
               >
-                <Icon strokeWidth={2} />
+                <Icon
+                  className={ICON_SIZE_CLASS.md}
+                />
               </span>
               <span
                 className={`text-badge max-w-full truncate transition-colors duration-(--motion-fast) ${

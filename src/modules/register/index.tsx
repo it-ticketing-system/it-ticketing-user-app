@@ -14,6 +14,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { clientAuthServices } from '@/apis/services/auth/client';
+import { PasswordField } from '@/components/shared';
 import { ROUTES } from '@/constants';
 import { usePostRequest } from '@/hooks';
 import {
@@ -67,7 +68,8 @@ const RegisterModule = () => {
       confirmPassword: '',
     },
 
-    mode: 'onSubmit',
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
   });
 
   const { mutateAsync: registerUser, isPending } = usePostRequest<
@@ -132,31 +134,25 @@ const RegisterModule = () => {
           <FieldError>{errors.username?.message}</FieldError>
         </TextField>
 
-        <TextField fullWidth isInvalid={Boolean(errors.password)}>
-          <Label>{t('fields.password.label')}</Label>
+        <PasswordField
+          label={t('fields.password.label')}
+          placeholder={t('fields.password.placeholder')}
+          registration={registerField('password')}
+          error={errors.password?.message}
+          autoComplete="new-password"
+          showPasswordLabel={t('fields.password.show')}
+          hidePasswordLabel={t('fields.password.hide')}
+        />
 
-          <Input
-            {...registerField('password')}
-            type="password"
-            autoComplete="new-password"
-            placeholder={t('fields.password.placeholder')}
-          />
-
-          <FieldError>{errors.password?.message}</FieldError>
-        </TextField>
-
-        <TextField fullWidth isInvalid={Boolean(errors.confirmPassword)}>
-          <Label>{t('fields.confirmPassword.label')}</Label>
-
-          <Input
-            {...registerField('confirmPassword')}
-            type="password"
-            autoComplete="new-password"
-            placeholder={t('fields.confirmPassword.placeholder')}
-          />
-
-          <FieldError>{errors.confirmPassword?.message}</FieldError>
-        </TextField>
+        <PasswordField
+          label={t('fields.confirmPassword.label')}
+          placeholder={t('fields.confirmPassword.placeholder')}
+          registration={registerField('confirmPassword')}
+          error={errors.confirmPassword?.message}
+          autoComplete="new-password"
+          showPasswordLabel={t('fields.confirmPassword.show')}
+          hidePasswordLabel={t('fields.confirmPassword.hide')}
+        />
       </div>
 
       <div className="flex w-full flex-col gap-3">

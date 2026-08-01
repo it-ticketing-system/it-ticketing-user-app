@@ -1,7 +1,7 @@
 import { CircleCheckBig } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import DImage from '@/components/shared/image';
-import { BREAKPOINTS } from '@/constants';
+import { DImage } from '@/components/shared';
+import { BREAKPOINTS, ICON_SIZE_CLASS } from '@/constants';
 import HeroActions from './hero-actions';
 
 const featureKeys = ['security', 'fastResponse', 'analytics'] as const;
@@ -59,8 +59,7 @@ const Management = () => {
             {featureKeys.map((feature) => (
               <div key={feature} className="flex items-center gap-1.5">
                 <CircleCheckBig
-                  size={18}
-                  className="text-primary-500 shrink-0"
+                  className={`text-primary-500 ${ICON_SIZE_CLASS.md} shrink-0`}
                 />
 
                 <span className="text-body-sm whitespace-nowrap">

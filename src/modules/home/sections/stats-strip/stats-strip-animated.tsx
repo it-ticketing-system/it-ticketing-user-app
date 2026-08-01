@@ -8,6 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { ICON_SIZE_CLASS } from '@/constants';
 
 type StatKey =
   'answeredTickets' | 'userSatisfaction' | 'activeUsers' | 'onlineSupport';
@@ -170,7 +171,10 @@ const StatsStripAnimated = ({ ariaLabel, labels }: StatsStripAnimatedProps) => {
               )}
 
               <div className="text-primary-500 flex size-9 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm lg:size-10">
-                <Icon aria-hidden="true" className="size-5 stroke-2" />
+                <Icon
+                  aria-hidden="true"
+                  className={ICON_SIZE_CLASS.md}
+                />
               </div>
 
               <div className="flex min-w-0 flex-col gap-1">

@@ -8,6 +8,7 @@ import {
   ZapIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { ICON_SIZE_CLASS } from '@/constants';
 import type { LucideIcon } from 'lucide-react';
 
 interface IFeatureCard {
@@ -47,7 +48,7 @@ const FeatureCard = ({ title, description, icon: Icon }: IFeatureCard) => {
   return (
     <article className="group ease-standard hover:border-primary-200 flex min-h-35 w-full flex-col items-center justify-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-center transition-all duration-250 hover:-translate-y-1 hover:shadow-sm lg:min-h-40 lg:p-5">
       <div className="bg-primary-50 text-primary-500 group-hover:bg-primary-100 flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors duration-250">
-        <Icon className="size-5 stroke-2" />
+        <Icon className={ICON_SIZE_CLASS.md} />
       </div>
 
       <div className="flex flex-col items-center gap-1.5">

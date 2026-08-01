@@ -5,8 +5,8 @@ import {
   UsersRoundIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import DImage from '@/components/shared/image';
-import { BREAKPOINTS } from '@/constants';
+import { DImage } from '@/components/shared';
+import { BREAKPOINTS, ICON_SIZE_CLASS } from '@/constants';
 
 const features = [
   {
@@ -48,8 +48,7 @@ const AllInOneOverview = () => {
                   className="group ease-standard hover:bg-primary-50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-colors duration-250"
                 >
                   <CircleCheckBig
-                    size={20}
-                    className="text-primary-500 shrink-0"
+                    className={`text-primary-500 ${ICON_SIZE_CLASS.md} shrink-0`}
                   />
 
                   <span className="text-body-sm xl:text-body flex-1 text-right text-neutral-700">
@@ -57,7 +56,9 @@ const AllInOneOverview = () => {
                   </span>
 
                   <div className="bg-primary-50 text-primary-500 group-hover:bg-primary-100 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-250">
-                    <Icon size={18} strokeWidth={2} />
+                    <Icon
+                      className={ICON_SIZE_CLASS.md}
+                    />
                   </div>
                 </div>
               ))}

@@ -4,7 +4,7 @@ import { Badge } from '@heroui/react';
 import { Bell } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { ROUTES } from '@/constants';
+import { ICON_SIZE_CLASS, ROUTES } from '@/constants';
 
 type NotificationLinkProps = {
   unreadNotificationsCount: number;
@@ -13,7 +13,7 @@ type NotificationLinkProps = {
 const NotificationLink = ({
   unreadNotificationsCount,
 }: NotificationLinkProps) => {
-  const t = useTranslations('pwa_layout.appHeader');
+  const t = useTranslations('pwaLayout.appHeader');
 
   return (
     <Badge.Anchor className="shrink-0">
@@ -22,7 +22,9 @@ const NotificationLink = ({
         aria-label={t('notifications')}
         className="text-muted hover:bg-surface-secondary hover:text-foreground focus-visible:ring-focus relative flex size-11 shrink-0 items-center justify-center rounded-md transition-colors duration-(--motion-fast) outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
       >
-        <Bell className="lg:size-5" strokeWidth={2} />
+        <Bell
+          className={ICON_SIZE_CLASS.md}
+        />
       </Link>
 
       {unreadNotificationsCount > 0 ? (
