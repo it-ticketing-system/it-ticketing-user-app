@@ -3,7 +3,10 @@ import type { TicketDetailsModuleProps } from './types';
 
 const TicketDetailsModule = ({ initialData }: TicketDetailsModuleProps) => {
   return (
-    <section dir="rtl" className="flex min-h-0 w-full flex-1 pb-6 lg:pb-8">
+    <section
+      dir="rtl"
+      className="flex h-[calc(100dvh-9rem-env(safe-area-inset-bottom))] min-h-0 w-full flex-1 overflow-hidden lg:h-[calc(100dvh-6rem)]"
+    >
       <TicketDetailsContent initialData={initialData} />
     </section>
   );

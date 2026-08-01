@@ -2,6 +2,7 @@
 
 import { Label, ListBox, Select } from '@heroui/react';
 import { ChevronDown } from 'lucide-react';
+import { ICON_SIZE_CLASS } from '@/constants';
 import { cn } from '@/utils';
 
 type TicketFilterSelectProps = {
@@ -41,7 +42,7 @@ const TicketFilterSelect = ({
         <Select.Value />
 
         <Select.Indicator>
-          <ChevronDown aria-hidden="true" className="size-4" />
+          <ChevronDown aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
         </Select.Indicator>
       </Select.Trigger>
 

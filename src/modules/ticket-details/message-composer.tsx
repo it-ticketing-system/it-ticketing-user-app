@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, FieldError, Label, TextArea, TextField } from '@heroui/react';
+import { Button, Label, TextArea, TextField } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { LockKeyhole, Paperclip, Send } from 'lucide-react';
@@ -16,13 +16,14 @@ import {
 import { SelectedFilesList } from '@/components/shared';
 import {
   QUERY_KEYS,
+  ICON_SIZE_CLASS,
   TICKET_ATTACHMENT_ACCEPT,
   TICKET_ATTACHMENT_ALLOWED_EXTENSIONS,
   TICKET_ATTACHMENT_MAX_FILES,
   TICKET_ATTACHMENT_MAX_SIZE,
 } from '@/constants';
 import { usePostRequest } from '@/hooks';
-import { getFileExtension, isAllowedFileExtension } from '@/utils';
+import { cn, getFileExtension, isAllowedFileExtension } from '@/utils';
 import {
   createMessageComposerSchema,
   type MessageComposerFormValues,
@@ -61,7 +62,6 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
     defaultValues: {
       body: '',
     },
-    mode: 'onSubmit',
   });
 
   const message = useWatch({
@@ -172,11 +172,14 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
 
   if (isClosed) {
     return (
-      <div className="space-y-3">
+      <div className="w-full min-w-0 space-y-3">
         <div className="border-warning-200 bg-warning-soft flex items-start gap-3 rounded-lg border p-3">
           <LockKeyhole
             aria-hidden="true"
-            className="text-warning-600 mt-0.5 size-4 shrink-0"
+            className={cn(
+              'text-warning-600 mt-0.5 shrink-0',
+              ICON_SIZE_CLASS.sm,
+            )}
           />
 
           <div>
@@ -190,14 +193,14 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex w-full min-w-0 items-end gap-2">
           <Button
             type="button"
             isIconOnly
             variant="outline"
             isDisabled
             aria-label={t('attachment')}
-            className="button button--md button--icon-only size-11 shrink-0 rounded-lg"
+            className="button button--md button--icon-only shrink-0 rounded-lg"
           >
             <Paperclip />
           </Button>
@@ -208,17 +211,17 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
             fullWidth
             variant="secondary"
             placeholder={t('closed.placeholder')}
-            className="min-h-11 resize-none rounded-lg"
+            className="min-h-11 min-w-0 resize-none rounded-lg"
           />
 
           <Button
             type="button"
             isIconOnly
             isDisabled
-            className="size-11 shrink-0 rounded-lg"
+            className="button button--md button--icon-only shrink-0 rounded-lg"
             aria-label={t('send')}
           >
-            <Send aria-hidden="true" className="size-4" />
+            <Send aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -226,9 +229,13 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full min-w-0 space-y-3"
+      noValidate
+    >
       {files.length > 0 ? (
-        <div className="border-border rounded-lg border bg-neutral-50 p-3">
+        <div className="border-border max-h-32 overflow-y-auto rounded-lg border bg-neutral-50 p-2 lg:max-h-40 lg:p-3">
           <SelectedFilesList
             files={files}
             isDisabled={isPending}
@@ -254,7 +261,7 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
         onChange={handleFileChange}
       />
 
-      <div className="flex items-end gap-2">
+      <div className="flex w-full min-w-0 items-end gap-2">
         <Button
           type="button"
           isIconOnly
@@ -280,10 +287,8 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
             maxLength={4000}
             variant="secondary"
             placeholder={t('placeholder')}
-            className="max-h-32 min-h-11 resize-none rounded-lg"
+            className="max-h-32 min-h-11 min-w-0 resize-none rounded-lg"
           />
-
-          <FieldError>{errors.body?.message}</FieldError>
         </TextField>
 
         <Button
@@ -292,9 +297,9 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
           isPending={isPending}
           isDisabled={isSubmitDisabled}
           aria-label={t('send')}
-          className="size-11 shrink-0 rounded-lg lg:hidden"
+          className="button button--md button--icon-only shrink-0 rounded-lg lg:hidden"
         >
-          <Send aria-hidden="true" className="size-5" />
+          <Send aria-hidden="true" />
         </Button>
 
         <Button
@@ -303,7 +308,10 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
           isDisabled={isSubmitDisabled}
           className="button button--md hidden h-11 min-w-24 shrink-0 rounded-lg lg:flex"
         >
-          <Send aria-hidden="true" />
+          <Send
+            aria-hidden="true"
+            className={cn(ICON_SIZE_CLASS.sm, 'shrink-0')}
+          />
           {t('send')}
         </Button>
       </div>

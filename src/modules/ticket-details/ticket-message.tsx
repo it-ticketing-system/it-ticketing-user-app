@@ -2,6 +2,7 @@ import { Avatar } from '@heroui/react';
 import { Bell, Info, Settings } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { FileAttachmentLink } from '@/components/shared';
+import { ICON_SIZE_CLASS } from '@/constants';
 import { cn } from '@/utils';
 import type { TicketMessage } from './types';
 import type { TicketSystemMessageTone } from '@/models';
@@ -19,13 +20,28 @@ const SYSTEM_STYLES: Record<TicketSystemMessageTone, string> = {
 const SystemIcon = ({ tone }: { tone: TicketSystemMessageTone }) => {
   switch (tone) {
     case 'warning':
-      return <Bell aria-hidden="true" className="mt-0.5 size-4 shrink-0" />;
+      return (
+        <Bell
+          aria-hidden="true"
+          className={`mt-0.5 ${ICON_SIZE_CLASS.sm} shrink-0`}
+        />
+      );
 
     case 'neutral':
-      return <Settings aria-hidden="true" className="mt-0.5 size-4 shrink-0" />;
+      return (
+        <Settings
+          aria-hidden="true"
+          className={`mt-0.5 ${ICON_SIZE_CLASS.sm} shrink-0`}
+        />
+      );
 
     default:
-      return <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0" />;
+      return (
+        <Info
+          aria-hidden="true"
+          className={`mt-0.5 ${ICON_SIZE_CLASS.sm} shrink-0`}
+        />
+      );
   }
 };
 
@@ -62,7 +78,9 @@ const SystemMessage = ({ message }: TicketMessageProps) => {
           </time>
         </div>
 
-        <p className="text-body-sm whitespace-pre-wrap">{message.body}</p>
+        <p className="text-body-sm whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+          {message.body}
+        </p>
       </div>
     </div>
   );
@@ -117,7 +135,7 @@ const TicketMessage = ({ message }: TicketMessageProps) => {
           </time>
         </header>
 
-        <p className="text-body-sm text-foreground whitespace-pre-wrap">
+        <p className="text-body-sm text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
           {message.body}
         </p>
 
@@ -127,7 +145,7 @@ const TicketMessage = ({ message }: TicketMessageProps) => {
               {t('conversation.attachments')}
             </p>
 
-            <div className="grid gap-2 lg:grid-cols-2">
+            <div className="grid min-w-0 gap-2 lg:grid-cols-2">
               {message.attachments.map((attachment) => (
                 <FileAttachmentLink
                   key={attachment.id}

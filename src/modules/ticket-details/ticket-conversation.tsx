@@ -21,8 +21,8 @@ const TicketConversation = ({
   const isClosed = status === 'closed';
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-4 flex items-center gap-3 lg:hidden">
+    <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="mb-4 flex shrink-0 items-center gap-3 lg:hidden">
         <div className="bg-separator h-px flex-1" />
 
         <h2 className="text-title text-foreground shrink-0">{t('title')}</h2>
@@ -32,9 +32,9 @@ const TicketConversation = ({
 
       <Card
         variant="transparent"
-        className="lg:border-border lg:bg-surface flex min-h-0 flex-1 flex-col border-0 bg-transparent px-0 shadow-none lg:rounded-xl lg:border lg:shadow-sm"
+        className="lg:border-border lg:bg-surface flex min-h-0 flex-1 flex-col overflow-hidden border-0 bg-transparent px-0 shadow-none lg:rounded-xl lg:border lg:shadow-sm"
       >
-        <Card.Content className="min-h-0 flex-1 space-y-3 overflow-y-auto p-0 lg:p-6">
+        <Card.Content className="min-h-0 flex-1 space-y-3 overflow-y-auto p-0 pb-4 lg:p-6">
           {messages.length ? (
             messages.map((message) => (
               <TicketMessage key={message.id} message={message} />
@@ -46,7 +46,7 @@ const TicketConversation = ({
           )}
         </Card.Content>
 
-        <Card.Footer className="border-separator bg-surface mt-4 block shrink-0 border-t px-0 pt-4 lg:mt-0 lg:p-4">
+        <Card.Footer className="border-separator bg-surface block shrink-0 border-t p-0 lg:p-4">
           <MessageComposer ticketId={ticketId} isClosed={isClosed} />
         </Card.Footer>
       </Card>

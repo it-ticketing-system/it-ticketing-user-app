@@ -8,7 +8,9 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { ICON_SIZE_CLASS } from '@/constants';
 import { useMediaQuery } from '@/hooks';
+import { cn } from '@/utils';
 import TicketDateField from './ticket-date-field';
 import TicketFilterSelect from './ticket-filter-select';
 import {
@@ -184,7 +186,7 @@ const MyTicketsFilters = ({
               >
                 <CalendarDays
                   aria-hidden="true"
-                  className="text-muted size-5 shrink-0"
+                  className={cn('text-muted shrink-0', ICON_SIZE_CLASS.md)}
                 />
 
                 <span className="min-w-0 flex-1 truncate">
@@ -193,7 +195,7 @@ const MyTicketsFilters = ({
 
                 <ChevronDown
                   aria-hidden="true"
-                  className="text-muted size-4 shrink-0"
+                  className={cn('text-muted shrink-0', ICON_SIZE_CLASS.sm)}
                 />
               </Button>
             </Popover.Trigger>
@@ -237,7 +239,10 @@ const MyTicketsFilters = ({
                     onPress={resetDateRange}
                     className="text-danger h-10"
                   >
-                    <RotateCcw aria-hidden="true" className="size-4" />
+                    <RotateCcw
+                      aria-hidden="true"
+                      className={ICON_SIZE_CLASS.sm}
+                    />
                     {t('dateRange.clear')}
                   </Button>
                 ) : null}
@@ -256,10 +261,10 @@ const MyTicketsFilters = ({
             {isPending ? (
               <LoaderCircle
                 aria-hidden="true"
-                className="size-4 animate-spin"
+                className={cn(ICON_SIZE_CLASS.sm, 'animate-spin')}
               />
             ) : (
-              <RotateCcw aria-hidden="true" className="size-4" />
+              <RotateCcw aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
             )}
             {t('actions.reset')}
           </Button>

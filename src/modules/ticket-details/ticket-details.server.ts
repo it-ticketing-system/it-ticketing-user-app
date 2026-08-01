@@ -4,10 +4,10 @@ import { notFound } from 'next/navigation';
 import { normalizeApiError } from '@/apis/core/api-error';
 import { serverTicketServices } from '@/apis/services/tickets/server';
 
-const toTicketId = (value: string): string => {
+const normalizeTicketId = (value: string): string => {
   const normalizedValue = value.trim();
 
-  if (!/^\d+$/.test(normalizedValue)) {
+  if (!normalizedValue) {
     notFound();
   }
 
@@ -15,7 +15,7 @@ const toTicketId = (value: string): string => {
 };
 
 export const getTicketDetailsInitialData = async (rawTicketId: string) => {
-  const ticketId = toTicketId(rawTicketId);
+  const ticketId = normalizeTicketId(rawTicketId);
 
   return serverTicketServices.getTicketDetails(ticketId).catch((error) => {
     const apiError = normalizeApiError(error);

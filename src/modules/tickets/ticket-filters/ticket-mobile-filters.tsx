@@ -4,6 +4,8 @@ import { Button, Modal } from '@heroui/react';
 import { Filter, LoaderCircle, RotateCcw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { ICON_SIZE_CLASS } from '@/constants';
+import { cn } from '@/utils';
 import TicketDateField from './ticket-date-field';
 import TicketFilterSelect from './ticket-filter-select';
 import {
@@ -84,7 +86,7 @@ const TicketMobileFilters = ({
             onPress={openFilters}
             className="border-field-border bg-surface relative h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-md"
           >
-            <Filter aria-hidden="true" className="size-5" />
+            <Filter aria-hidden="true" className={ICON_SIZE_CLASS.md} />
 
             {activeFilterCount > 0 ? (
               <span
@@ -177,7 +179,10 @@ const TicketMobileFilters = ({
                         onPress={resetDraft}
                         className="text-danger h-11 px-2"
                       >
-                        <RotateCcw aria-hidden="true" className="size-4" />
+                        <RotateCcw
+                          aria-hidden="true"
+                          className={ICON_SIZE_CLASS.sm}
+                        />
                         {t('mobile.reset')}
                       </Button>
 
@@ -203,7 +208,7 @@ const TicketMobileFilters = ({
                           {isPending ? (
                             <LoaderCircle
                               aria-hidden="true"
-                              className="size-4 animate-spin"
+                              className={cn(ICON_SIZE_CLASS.sm, 'animate-spin')}
                             />
                           ) : null}
                           {t('mobile.apply')}

@@ -6,10 +6,11 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Suspense } from 'react';
 import { TicketStatusChip } from '@/components/shared';
+import { ICON_SIZE_CLASS } from '@/constants';
 import {
   TablePagination,
   TablePaginationFallback,
-} from '@/containers/table-container';
+} from '@/containers';
 import { MobileTicketCardSkeleton } from '../skeleton/mobile-tickets-list-skeleton';
 import {
   TicketsTableEmptyState,
@@ -94,7 +95,10 @@ const MobileTicketsList = ({
 
                 <Card.Footer className="border-separator mt-auto flex-row items-center justify-between border-t px-4 py-3">
                   <div className="text-caption text-muted flex min-w-0 items-center gap-1.5">
-                    <Clock3 aria-hidden="true" className="size-3.5 shrink-0" />
+                    <Clock3
+                      aria-hidden="true"
+                      className={`${ICON_SIZE_CLASS.sm} shrink-0`}
+                    />
 
                     <span className="truncate">{ticket.lastUpdatedLabel}</span>
                   </div>
@@ -104,7 +108,7 @@ const MobileTicketsList = ({
 
                     <ArrowLeft
                       aria-hidden="true"
-                      className="size-4 transition-transform group-hover:-translate-x-0.5"
+                      className={`${ICON_SIZE_CLASS.sm} transition-transform group-hover:-translate-x-0.5`}
                     />
                   </div>
                 </Card.Footer>

@@ -5,10 +5,11 @@ import { Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { TicketStatusChip } from '@/components/shared';
-import { TableContainer } from '@/containers/table-container';
+import { ICON_SIZE_CLASS } from '@/constants';
+import { TableContainer } from '@/containers';
 import { TicketsTableEmptyState, TicketsTableErrorState } from './table-states';
 import type { TicketsTableViewProps } from './types';
-import type { TableHeaderOptions } from '@/containers/table-container';
+import type { TableHeaderOptions } from '@/containers';
 
 type TicketTableColumnKey =
   | 'ticketNumber'
@@ -142,9 +143,8 @@ const TicketsDesktopTable = ({
                 number: ticket.ticketNumber,
               })}
               onPress={() => router.push(ticket.detailsHref)}
-              className="[&>svg]:!size-[18px]"
             >
-              <Eye aria-hidden="true" />
+              <Eye aria-hidden="true" className={ICON_SIZE_CLASS.md} />
             </Button>
           </Table.Cell>
         </Table.Row>

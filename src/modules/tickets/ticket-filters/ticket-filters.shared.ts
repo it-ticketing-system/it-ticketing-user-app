@@ -30,11 +30,6 @@ export const EMPTY_FILTER_DRAFT: FilterDraft = {
   to: '',
 };
 
-export const EMPTY_TICKET_FILTERS: TicketFiltersValue = {
-  search: '',
-  ...EMPTY_FILTER_DRAFT,
-};
-
 export const createTicketFilterPatch = (
   key: keyof FilterDraft,
   value: string,

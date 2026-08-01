@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { TicketsModule } from '@/modules';
-import { TicketsSearchParams } from '@/modules/tickets/tickets-query';
+import { TicketsModule, type TicketsSearchParams } from '@/modules';
 
 type TicketsPageProps = {
   searchParams: Promise<TicketsSearchParams>;

@@ -7,6 +7,7 @@ import { SelectedFilesList } from '@/components/shared';
 import {
   TICKET_ATTACHMENT_ACCEPT,
   TICKET_ATTACHMENT_ALLOWED_EXTENSIONS,
+  ICON_SIZE_CLASS,
   TICKET_ATTACHMENT_MAX_FILES,
   TICKET_ATTACHMENT_MAX_SIZE,
 } from '@/constants';
@@ -143,7 +144,7 @@ const AttachmentField = ({
           <div className="pointer-events-none flex flex-col items-center text-center">
             <CloudUpload
               aria-hidden="true"
-              className="text-muted mb-2 size-7 lg:size-8"
+              className={cn('text-muted mb-2', ICON_SIZE_CLASS.lg)}
             />
 
             <p className="text-body-sm text-foreground font-medium">

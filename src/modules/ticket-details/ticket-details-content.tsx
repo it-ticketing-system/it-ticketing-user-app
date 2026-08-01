@@ -22,7 +22,7 @@ const TicketDetailsContent = ({ initialData }: TicketDetailsContentProps) => {
   const { ticket, messages } = data;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 lg:gap-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden lg:gap-6">
       <TicketInfoCard ticket={ticket} />
 
       <TicketConversation

@@ -23,7 +23,7 @@ import {
   type CreateTicketRequest,
   type CreateTicketResult,
 } from '@/apis/services/tickets/client';
-import { QUERY_KEYS, ROUTES } from '@/constants';
+import { ICON_SIZE_CLASS, QUERY_KEYS, ROUTES } from '@/constants';
 import { usePostRequest } from '@/hooks';
 import AttachmentField from './attachment-field';
 import {
@@ -87,7 +87,8 @@ const CreateTicketForm = ({
       initialMessage: '',
     },
 
-    mode: 'onSubmit',
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
   });
 
   const initialMessage = useWatch({
@@ -261,7 +262,7 @@ const CreateTicketForm = ({
           isDisabled={!hasDepartments}
           className="h-11 w-full rounded-md lg:w-auto lg:min-w-36"
         >
-          <Send aria-hidden="true" className="size-4" />
+          <Send aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
           {t('actions.submit')}
         </Button>
       </div>

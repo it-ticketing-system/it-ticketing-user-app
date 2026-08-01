@@ -3,6 +3,7 @@
 import { Button } from '@heroui/react';
 import { AlertCircle, Inbox, RefreshCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { ICON_SIZE_CLASS } from '@/constants';
 import { cn } from '@/utils';
 import type { TicketsTableProps } from './types';
 
@@ -32,7 +33,7 @@ export const TicketsTableErrorState = ({
   return (
     <div className={cn(stateClassName, className)}>
       <div className="bg-danger-50 text-danger flex size-12 items-center justify-center rounded-full">
-        <AlertCircle aria-hidden="true" className="size-6" />
+        <AlertCircle aria-hidden="true" className={ICON_SIZE_CLASS.lg} />
       </div>
 
       <div className="space-y-1">
@@ -48,7 +49,7 @@ export const TicketsTableErrorState = ({
         onPress={onRetry}
         className="mt-1 h-10"
       >
-        <RefreshCw aria-hidden="true" className="size-4" />
+        <RefreshCw aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
         {t('error.retry')}
       </Button>
     </div>
@@ -63,7 +64,7 @@ export const TicketsTableEmptyState = ({
   return (
     <div className={cn(stateClassName, className)}>
       <div className="bg-primary-50 text-accent flex size-12 items-center justify-center rounded-full">
-        <Inbox aria-hidden="true" className="size-6" />
+        <Inbox aria-hidden="true" className={ICON_SIZE_CLASS.lg} />
       </div>
 
       <div className="space-y-1">

@@ -11,6 +11,7 @@ import {
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo } from 'react';
 import { I18nProvider } from 'react-aria/I18nProvider';
+import { ICON_SIZE_CLASS } from '@/constants';
 
 const PERSIAN_LOCALE = 'fa-IR-u-ca-persian';
 const PERSIAN_CALENDAR = new PersianCalendar();
@@ -74,7 +75,7 @@ const TicketDateField = ({
           </DateField.InputContainer>
 
           <DatePicker.Trigger aria-label={label} className="w-auto flex-none">
-            <CalendarDays aria-hidden="true" className="size-5" />
+            <CalendarDays aria-hidden="true" className={ICON_SIZE_CLASS.md} />
           </DatePicker.Trigger>
         </DateField.Group>
 
@@ -82,13 +83,13 @@ const TicketDateField = ({
           <Calendar>
             <Calendar.Header>
               <Calendar.NavButton slot="previous">
-                <ChevronRight aria-hidden="true" className="size-4" />
+                <ChevronRight aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
               </Calendar.NavButton>
 
               <Calendar.Heading />
 
               <Calendar.NavButton slot="next">
-                <ChevronLeft aria-hidden="true" className="size-4" />
+                <ChevronLeft aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
               </Calendar.NavButton>
             </Calendar.Header>
 

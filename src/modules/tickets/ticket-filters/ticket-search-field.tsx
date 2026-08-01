@@ -1,7 +1,6 @@
 'use client';
 
 import { SearchField } from '@heroui/react';
-import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 type TicketSearchFieldProps = {
@@ -27,15 +26,11 @@ const TicketSearchField = ({
       className={className}
     >
       <SearchField.Group>
-        <SearchField.SearchIcon>
-          <Search aria-hidden="true" className="size-4" />
-        </SearchField.SearchIcon>
+        <SearchField.SearchIcon />
 
         <SearchField.Input placeholder={t('placeholder')} />
 
-        <SearchField.ClearButton aria-label={t('clearAriaLabel')}>
-          <X aria-hidden="true" className="size-4" />
-        </SearchField.ClearButton>
+        <SearchField.ClearButton aria-label={t('clearAriaLabel')} />
       </SearchField.Group>
     </SearchField>
   );

@@ -12,7 +12,7 @@ import {
 import type { TicketTableData } from './ticket-table';
 import type { IDepartmentLookup } from '@/models';
 
-export type TicketsInitialData = {
+type TicketsInitialData = {
   initialDepartments: IDepartmentLookup[];
   initialFilters: ReturnType<typeof parseTicketFilters>;
   initialTickets: TicketTableData;
