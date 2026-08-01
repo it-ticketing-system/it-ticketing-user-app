@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { clientAuthServices } from '@/apis/services/auth/client';
 import { QUERY_KEYS, ROUTES } from '@/constants';
-import { AuthContext } from '@/contexts/auth-context';
+import { AuthContext } from '@/contexts';
 import { useGetRequest } from '@/hooks';
 
 const AuthProvider: FCC = ({ children }) => {

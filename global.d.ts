@@ -1,19 +1,19 @@
 import { FC, PropsWithChildren } from 'react';
 import auth from './messages/fa/auth.json';
 import common from './messages/fa/common.json';
-import createTicket from './messages/fa/create-ticket.json';
+import createTicket from './messages/fa/createTicket.json';
 import footer from './messages/fa/footer.json';
 import header from './messages/fa/header.json';
 import home from './messages/fa/home.json';
-import main_layout from './messages/fa/main-layout.json';
-import pageHeader from './messages/fa/page-header.json';
-import pwa_layout from './messages/fa/pwa-layout.json';
-import ticketDetails from './messages/fa/ticket-details.json';
+import mainLayout from './messages/fa/mainLayout.json';
+import pageHeader from './messages/fa/pageHeader.json';
+import pwaLayout from './messages/fa/pwaLayout.json';
+import ticketDetails from './messages/fa/ticketDetails.json';
 import tickets from './messages/fa/tickets.json';
 
 type Messages = {
-  main_layout: typeof main_layout;
-  pwa_layout: typeof pwa_layout;
+  mainLayout: typeof mainLayout;
+  pwaLayout: typeof pwaLayout;
   header: typeof header;
   home: typeof home;
   footer: typeof footer;
@@ -32,7 +32,6 @@ declare module 'next-intl' {
 }
 declare global {
   type FCC<P = object> = FC<PropsWithChildren<P>>;
-  type UserRole = 'USER' | 'SUPPORT' | 'ADMIN';
   type PageQueryValue = string | string[] | undefined;
   type SelectOption<T = string> = {
     value: T;

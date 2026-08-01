@@ -1,5 +1,5 @@
 import { PWALayout } from '@/layouts';
-import AuthProvider from '@/providers/auth-provider';
+import { AuthProvider } from '@/providers';
 
 const Layout: FCC = ({ children }) => {
   return (

@@ -6,7 +6,6 @@ export type { IUser } from './user';
 export type {
   ITicket,
   ITicketMessage,
-  TicketMessageType,
   TicketStatus,
   TicketSystemMessageTone,
 } from './ticket';

@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext } from 'react';
-import { IUser } from '@/models/user';
 import type { ApiException } from '@/apis/core/api-error';
+import type { IUser } from '@/models';
 
-export type AuthStatus =
+type AuthStatus =
   'loading' | 'authenticated' | 'unauthenticated' | 'error';
 
-export interface AuthContextValue {
+interface AuthContextValue {
   user: IUser | null;
   status: AuthStatus;
   isAuthenticated: boolean;

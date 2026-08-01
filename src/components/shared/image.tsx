@@ -18,9 +18,9 @@ type StaticDImageSource = SourceOptions & {
   height?: ImageProps['height'];
 };
 
-export type DImageSource = StringDImageSource | StaticDImageSource;
+type DImageSource = StringDImageSource | StaticDImageSource;
 
-export type DImageVariant = DImageSource & {
+type DImageVariant = DImageSource & {
   media: string;
 };
 
@@ -81,7 +81,7 @@ type ResponsiveDImageProps = Omit<
   pictureClassName?: string;
 };
 
-export type DImageProps = NormalDImageProps | ResponsiveDImageProps;
+type DImageProps = NormalDImageProps | ResponsiveDImageProps;
 
 const isResponsiveImage = (
   props: DImageProps,

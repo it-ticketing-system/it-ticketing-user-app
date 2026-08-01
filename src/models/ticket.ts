@@ -2,7 +2,7 @@ import type { IUploadedFile } from './file';
 
 export type TicketStatus =
   'open' | 'inProgress' | 'waitingUser' | 'resolved' | 'closed';
-export type TicketMessageType = 'user' | 'support' | 'system';
+type TicketMessageType = 'user' | 'support' | 'system';
 export type TicketSystemMessageTone = 'info' | 'warning' | 'neutral';
 
 export interface ITicketMessage {

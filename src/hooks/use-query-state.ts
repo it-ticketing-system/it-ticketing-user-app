@@ -2,28 +2,18 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useTransition } from 'react';
 
-export type QueryPrimitive = string | number | boolean | null | undefined;
+type QueryPrimitive = string | number | boolean | null | undefined;
 
-export type QueryValue = QueryPrimitive | readonly QueryPrimitive[];
+type QueryValue = QueryPrimitive | readonly QueryPrimitive[];
 
-export type QueryPatch = Record<string, QueryValue>;
+type QueryPatch = Record<string, QueryValue>;
 
-export type QueryUpdateOptions = {
+type QueryUpdateOptions = {
   clear?: readonly string[];
   history?: 'push' | 'replace';
   scroll?: boolean;
   strategy?: 'router' | 'native';
 };
-
-export const REPLACE_QUERY_OPTIONS = {
-  history: 'replace',
-  scroll: false,
-} as const satisfies QueryUpdateOptions;
-
-export const REPLACE_QUERY_WITH_RESET_PAGE_OPTIONS = {
-  ...REPLACE_QUERY_OPTIONS,
-  clear: ['page'],
-} as const satisfies QueryUpdateOptions;
 
 const normalizeQueryValue = (value: QueryPrimitive): string | null => {
   if (value === null || value === undefined) {

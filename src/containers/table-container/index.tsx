@@ -3,12 +3,13 @@
 import { Pagination, Spinner, Table } from '@heroui/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Suspense, type ReactNode } from 'react';
-import { useQueryState } from '@/hooks/use-query-state';
+import { ICON_SIZE_CLASS } from '@/constants';
+import { useQueryState } from '@/hooks';
 import type { PaginationMeta } from '@/apis/core/types/api-response';
 
 type TableKey = string | number;
 
-export type TableSkeletonType =
+type TableSkeletonType =
   'text' | 'double-text' | 'action' | 'image-text' | 'badge';
 
 export interface TableHeaderOptions<TColumnKey extends TableKey = TableKey> {
@@ -19,20 +20,20 @@ export interface TableHeaderOptions<TColumnKey extends TableKey = TableKey> {
   skeletonType?: TableSkeletonType;
 }
 
-export interface TablePaginationOptions extends PaginationMeta {
+interface TablePaginationOptions extends PaginationMeta {
   pageParam?: string;
   isPending?: boolean;
   onPageChange?: (page: number) => void;
 }
 
-export interface TablePaginationLabels {
+interface TablePaginationLabels {
   previous: string;
   next: string;
   page: (page: number) => string;
   summary: (data: { from: number; to: number; total: number }) => ReactNode;
 }
 
-export interface TableContainerProps<
+interface TableContainerProps<
   TItem extends { id: TableKey },
   TColumnKey extends TableKey = TableKey,
 > {
@@ -163,7 +164,7 @@ const TablePagination = ({
               isDisabled={isPageChangePending || safePage === 1}
               onPress={() => changePage(safePage - 1)}
             >
-              <ChevronRight aria-hidden="true" className="size-4" />
+              <ChevronRight aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
             </Pagination.Previous>
           </Pagination.Item>
 
@@ -196,7 +197,7 @@ const TablePagination = ({
               isDisabled={isPageChangePending || safePage === safeTotalPages}
               onPress={() => changePage(safePage + 1)}
             >
-              <ChevronLeft aria-hidden="true" className="size-4" />
+              <ChevronLeft aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
             </Pagination.Next>
           </Pagination.Item>
         </Pagination.Content>

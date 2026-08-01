@@ -1,7 +1,7 @@
 import './globals.css';
 import { Geist, Vazirmatn } from 'next/font/google';
 import { getTranslations } from 'next-intl/server';
-import Providers from '@/providers';
+import { AppProviders } from '@/providers';
 import type { Metadata } from 'next';
 
 const geistSans = Geist({
@@ -17,7 +17,7 @@ const vazirmatn = Vazirmatn({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('main_layout');
+  const t = await getTranslations('mainLayout');
 
   return {
     title: {
@@ -41,7 +41,7 @@ export default function RootLayout({
       data-theme="light"
     >
       <body className="flex min-h-dvh flex-col antialiased">
-        <Providers>{children}</Providers>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

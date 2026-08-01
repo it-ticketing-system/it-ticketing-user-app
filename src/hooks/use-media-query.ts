@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BREAKPOINTS } from '@/constants/design';
+import { BREAKPOINTS } from '@/constants';
 
 type UseMediaQueryResult = {
   isDesktop: boolean | null;
