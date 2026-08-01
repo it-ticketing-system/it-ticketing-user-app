@@ -25,11 +25,14 @@ export interface PaginationMeta {
   totalPages: number;
 }
 
-export interface ApiPaginatedResponse<TItem> {
+export interface ApiPaginatedSuccessResponse<TItem> {
   success: true;
   data: TItem[];
   meta: PaginationMeta;
 }
+
+export type ApiPaginatedResponse<TItem> =
+  ApiPaginatedSuccessResponse<TItem> | ApiErrorResponse;
 
 export interface PaginatedResult<TItem> {
   items: TItem[];

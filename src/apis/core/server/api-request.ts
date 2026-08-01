@@ -88,9 +88,15 @@ export async function serverApiPaginatedRequest<TItem, TBody = unknown>(
       },
     });
 
+    const payload = response.data;
+
+    if (!payload.success) {
+      throw createApiExceptionFromPayload(payload.error, response.status);
+    }
+
     return {
-      items: response.data.data,
-      meta: response.data.meta,
+      items: payload.data,
+      meta: payload.meta,
     };
   } catch (error) {
     throw normalizeApiError(error);
