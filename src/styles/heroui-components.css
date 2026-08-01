@@ -67,4 +67,255 @@
   .button.button--lg > svg.lucide {
     @apply size-[18px] shrink-0;
   }
+
+  .textfield {
+    @apply gap-2;
+  }
+
+  .label {
+    @apply text-body-sm text-foreground font-medium;
+  }
+
+  .input {
+    @apply text-body-sm border-border bg-surface text-foreground h-11 rounded-md border px-3 shadow-none placeholder:text-neutral-400;
+  }
+
+  .search-field {
+    @apply gap-2;
+
+    .search-field__group {
+      @apply text-body-sm border-border bg-surface text-foreground w-full rounded-md border shadow-none;
+
+      height: 2.75rem !important;
+      min-height: 2.75rem !important;
+      border-width: var(--border-width-field);
+      border-color: var(--field-border);
+    }
+
+    .search-field__search-icon {
+      @apply pointer-events-none flex size-11 shrink-0 items-center justify-center text-neutral-400;
+    }
+
+    .search-field__input {
+      @apply text-body-sm min-w-0 flex-1 border-0 bg-transparent px-0 py-2 text-start shadow-none outline-none placeholder:text-neutral-400;
+    }
+
+    .search-field__clear-button {
+      @apply text-muted me-1 flex size-9 shrink-0 items-center justify-center rounded-md transition-colors;
+
+      @media (hover: hover) {
+        &:hover,
+        &[data-hovered='true'] {
+          @apply bg-default text-foreground;
+        }
+      }
+    }
+
+    &.search-field--secondary {
+      .search-field__group {
+        @apply bg-surface;
+
+        --search-field-group-bg: var(--surface);
+        --search-field-group-bg-hover: var(--surface);
+        --search-field-group-bg-focus: var(--surface);
+      }
+    }
+  }
+
+  .select {
+    @apply gap-2;
+
+    .select__trigger {
+      @apply text-body-sm border-border bg-surface text-foreground h-11 min-h-11 rounded-md border px-3 py-2 shadow-none;
+
+      border-width: var(--border-width-field);
+      border-color: var(--field-border);
+    }
+
+    .select__value {
+      @apply text-body-sm flex-1 text-start wrap-break-word text-current;
+
+      &[data-placeholder='true'] {
+        @apply text-neutral-400;
+      }
+    }
+
+    .select__indicator {
+      @apply text-muted;
+    }
+
+    .select__popover {
+      @apply border-border bg-surface rounded-lg border p-1 shadow-lg;
+
+      min-width: var(--trigger-width);
+
+      [data-slot='list-box'] {
+        @apply max-h-64 overflow-y-auto p-0 outline-none;
+      }
+
+      [data-slot='list-box-item'] {
+        @apply text-body-sm text-foreground flex cursor-default items-center justify-between gap-3 rounded-md px-3 py-2.5 outline-none;
+
+        &[data-focused='true'] {
+          @apply bg-default;
+        }
+
+        &[data-selected='true'] {
+          @apply bg-accent-soft text-accent-soft-foreground;
+        }
+      }
+
+      [data-slot='list-box-item-indicator'] {
+        @apply text-accent shrink-0;
+      }
+    }
+
+    &.select--secondary {
+      .select__trigger {
+        @apply bg-surface;
+
+        --select-trigger-bg: var(--surface);
+        --select-trigger-bg-hover: var(--surface);
+        --select-trigger-bg-focus: var(--surface);
+      }
+    }
+  }
+
+  .date-field {
+    @apply flex min-w-0 flex-col gap-2;
+  }
+
+  .date-input-group {
+    @apply text-body-sm border-border bg-surface text-foreground h-11 min-h-11 rounded-md border shadow-none;
+
+    border-width: var(--border-width-field);
+    border-color: var(--field-border);
+
+    .date-input-group__input-container {
+      @apply flex min-w-0 flex-1 items-center px-3 [direction:ltr];
+
+      width: fit-content;
+      overflow-x: auto;
+      overflow-y: clip;
+    }
+
+    .date-input-group__input {
+      @apply text-body-sm flex min-w-0 flex-1 cursor-text items-center gap-px border-0 bg-transparent px-0 py-2 shadow-none outline-none;
+    }
+
+    .date-input-group__segment {
+      &[data-placeholder='true'] {
+        @apply text-neutral-400;
+      }
+    }
+
+    &.date-input-group--secondary {
+      @apply bg-surface;
+    }
+
+    & > .date-picker__trigger {
+      @apply border-border border-r;
+    }
+  }
+
+  .date-picker {
+    @apply flex min-w-0 flex-col gap-2;
+
+    .date-picker__trigger {
+      @apply text-muted flex h-full w-auto flex-none shrink-0 items-center justify-center rounded-none px-3 transition-colors;
+
+      @media (hover: hover) {
+        &:hover,
+        &[data-hovered='true'] {
+          @apply text-foreground;
+        }
+      }
+    }
+  }
+
+  .date-picker__popover {
+    @apply border-border bg-surface w-[min(22rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-x-hidden rounded-xl border shadow-lg;
+
+    .calendar {
+      @apply w-full max-w-full p-0;
+    }
+
+    .calendar__header {
+      @apply mb-0 gap-2 px-1 pb-3;
+    }
+
+    .calendar__heading {
+      @apply text-center;
+    }
+  }
+
+  .table-root {
+    @apply border-border bg-surface overflow-hidden rounded-xl border shadow-sm;
+  }
+
+  .table__scroll-container {
+    @apply overflow-x-auto;
+  }
+
+  .table__content {
+    @apply min-w-[900px] table-fixed;
+  }
+
+  .table__header {
+    @apply bg-neutral-50;
+  }
+
+  .table__column {
+    @apply border-separator text-caption text-muted h-14 border-b px-4 text-start font-semibold;
+  }
+
+  .table__row {
+    @apply h-16 transition-colors;
+
+    @media (hover: hover) {
+      &:hover,
+      &[data-hovered='true'] {
+        @apply bg-neutral-50;
+      }
+    }
+  }
+
+  .table__cell {
+    @apply border-separator text-body-sm h-16 border-b px-4 py-3 text-start;
+  }
+
+  .table__footer {
+    @apply bg-surface px-4 py-3;
+  }
+
+  .pagination {
+    @apply w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4;
+
+    .pagination__summary {
+      @apply text-caption text-muted whitespace-nowrap;
+    }
+
+    .pagination__content {
+      @apply justify-end gap-1;
+    }
+
+    .pagination__link {
+      @apply size-8 min-w-8 rounded-md p-0;
+    }
+
+    .pagination__link[data-active='true'],
+    .pagination__link[aria-current='page'] {
+      @apply bg-accent text-accent-foreground;
+    }
+  }
+
+  .modal {
+    .modal__dialog {
+      @apply bg-surface shadow-xl;
+    }
+
+    .modal__heading {
+      @apply text-title;
+    }
+  }
 }

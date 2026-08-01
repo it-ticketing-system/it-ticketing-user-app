@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { isRouteActive, navigationItems } from './shared';
+import { cn } from '@/utils';
+import {
+  isRouteActive,
+  navigationItems,
+  PWA_SHELL_CONTAINER_CLASS,
+} from './shared';
 
 const BottomNavigation = () => {
   const t = useTranslations('pwa_layout.bottomNavigation');
@@ -15,7 +20,7 @@ const BottomNavigation = () => {
       aria-label={t('navigation')}
       className="border-border bg-surface fixed inset-x-0 bottom-0 z-50 border-t lg:hidden"
     >
-      <div className="mx-auto grid h-16 w-full max-w-7xl grid-cols-3 px-4 sm:px-5 md:px-6">
+      <div className={cn(PWA_SHELL_CONTAINER_CLASS, 'grid h-16 grid-cols-3')}>
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = isRouteActive(item.href, pathname);
