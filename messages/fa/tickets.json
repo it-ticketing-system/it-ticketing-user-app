@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "title": "تیکت‌های من",
+    "description": "مشاهده، جست‌وجو و پیگیری درخواست‌های پشتیبانی"
+  },
+  "header": {
+    "title": "تیکت‌های من",
+    "description": "لیست و جزئیات تمام درخواست‌های پشتیبانی شما",
+    "createTicket": "تیکت جدید"
+  },
+  "departments": {
+    "technical": "فنی",
+    "finance": "مالی",
+    "management": "مدیریت"
+  },
+  "filters": {
+    "sectionAriaLabel": "جست‌وجو و فیلتر تیکت‌ها",
+    "statuses": {
+      "open": "باز",
+      "inProgress": "در حال بررسی",
+      "waitingUser": "در انتظار کاربر",
+      "resolved": "حل شده",
+      "closed": "بسته شده"
+    },
+    "search": {
+      "ariaLabel": "جست‌وجو در تیکت‌ها",
+      "placeholder": "جست‌وجو در تیکت‌ها...",
+      "clearAriaLabel": "پاک کردن جست‌وجو"
+    },
+    "status": {
+      "ariaLabel": "فیلتر بر اساس وضعیت",
+      "label": "وضعیت",
+      "placeholder": "همه وضعیت‌ها"
+    },
+    "department": {
+      "ariaLabel": "فیلتر بر اساس دپارتمان",
+      "label": "دپارتمان",
+      "placeholder": "همه دپارتمان‌ها"
+    },
+    "dateRange": {
+      "buttonLabel": "بازه تاریخ",
+      "heading": "بازه تاریخ",
+      "description": "تاریخ شروع و پایان را انتخاب کنید.",
+      "from": "از تاریخ",
+      "to": "تا تاریخ",
+      "fromPrefix": "از",
+      "toPrefix": "تا",
+      "clear": "پاک کردن بازه"
+    },
+    "actions": {
+      "reset": "پاک کردن"
+    },
+    "mobile": {
+      "openAriaLabel": "باز کردن فیلترها",
+      "dialogAriaLabel": "فیلتر تیکت‌ها",
+      "heading": "فیلتر تیکت‌ها",
+      "description": "فیلترهای موردنظر را انتخاب و اعمال کنید.",
+      "cancel": "انصراف",
+      "apply": "اعمال فیلترها",
+      "reset": "پاک کردن"
+    }
+  },
+
+  "table": {
+    "ariaLabel": "لیست تیکت‌های من",
+
+    "columns": {
+      "ticketNumber": "شماره تیکت",
+      "title": "عنوان",
+      "department": "دپارتمان",
+      "status": "وضعیت",
+      "lastUpdated": "آخرین بروزرسانی",
+      "actions": "عملیات"
+    },
+
+    "statuses": {
+      "open": "باز",
+      "inProgress": "در حال بررسی",
+      "waitingUser": "در انتظار کاربر",
+      "resolved": "حل شده",
+      "closed": "بسته شده"
+    },
+
+    "loading": "در حال دریافت تیکت‌ها...",
+
+    "error": {
+      "title": "دریافت تیکت‌ها ناموفق بود",
+      "retry": "تلاش دوباره"
+    },
+
+    "empty": {
+      "title": "تیکتی پیدا نشد",
+      "description": "با تغییر جستجو یا فیلترها دوباره بررسی کنید."
+    },
+
+    "actions": {
+      "viewAriaLabel": "مشاهده تیکت {number}",
+      "details": "جزئیات"
+    },
+
+    "pagination": {
+      "summary": "نمایش {from} تا {to} از {total} تیکت",
+      "page": "صفحه {page}",
+      "previous": "صفحه قبل",
+      "next": "صفحه بعد"
+    }
+  }
+}
