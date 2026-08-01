@@ -15,8 +15,6 @@ export type {
   CreateTicketRequest,
   CreateTicketResult,
   GetMyTicketsRequest,
-  GetMyTicketsResponse,
-  GetTicketDetailsResponse,
   SendTicketMessageRequest,
   SendTicketMessageResult,
 } from './_types';

@@ -1,3 +1,4 @@
+import { toBackendProxyHref } from '@/utils';
 import type { UploadFileResponseDto } from './_dto';
 import type { UploadFileResult } from './_types';
 
@@ -8,6 +9,6 @@ export const toUploadFileResult = (
   name: file.originalName,
   mimeType: file.mimeType,
   size: file.size,
-  href: file.url,
+  href: toBackendProxyHref(file.url),
   createdAt: file.createdAt,
 });

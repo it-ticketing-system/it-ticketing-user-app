@@ -1,3 +1,5 @@
+type AuthUserRoleDto = 'USER' | 'SUPPORT' | 'ADMIN';
+
 export interface LoginRequestDto {
   username: string;
   password: string;
@@ -6,7 +8,7 @@ export interface LoginRequestDto {
 export interface LoginResponseDto {
   tokenType: 'Bearer';
   user: {
-    role: UserRole;
+    role: AuthUserRoleDto;
     name: string;
   };
 }
@@ -23,4 +25,11 @@ export interface RegisterResponseDto {
 
 export interface LogoutResponseDto {
   message: string;
+}
+
+export interface GetMeResponseDto {
+  id: number;
+  name: string;
+  username: string;
+  profileImageUrl: string | null;
 }

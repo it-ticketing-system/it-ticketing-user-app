@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { AUTH_COOKIE_NAME } from '@/constants/auth';
+import { AUTH_COOKIE_NAME } from '@/constants';
 import type { NextRequest } from 'next/server';
 
 const API_BASE_URL = process.env.API_BASE_URL;

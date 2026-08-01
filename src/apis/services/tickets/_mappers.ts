@@ -1,4 +1,5 @@
 import { ROUTES } from '@/constants';
+import { toBackendProxyHref } from '@/utils';
 import type {
   CreateTicketRequestDto,
   GetMyTicketsRequestDto,
@@ -118,7 +119,7 @@ export const toTicketListItem = (ticket: UserTicketListItemDto): ITicket => ({
   departmentName: ticket.department.name,
   status: TICKET_STATUS_MAP[ticket.status],
   lastUpdatedLabel: formatLastUpdatedLabel(ticket.lastUpdatedAt),
-  detailsHref: `${ROUTES.tickets}/${ticket.id}`,
+  detailsHref: ROUTES.ticketDetails(String(ticket.id)),
 });
 
 export const toTicket = (ticket: UserTicketDetailsDto): ITicket => ({
@@ -129,7 +130,7 @@ export const toTicket = (ticket: UserTicketDetailsDto): ITicket => ({
   status: TICKET_STATUS_MAP[ticket.status],
   createdAtLabel: formatDateTimeLabel(ticket.createdAt),
   lastUpdatedLabel: formatLastUpdatedLabel(ticket.updatedAt),
-  detailsHref: `${ROUTES.tickets}/${ticket.id}`,
+  detailsHref: ROUTES.ticketDetails(String(ticket.id)),
 });
 
 export const toTicketMessage = (
@@ -148,7 +149,7 @@ export const toTicketMessage = (
       id: file.id,
       name: file.originalName,
       size: file.size ?? 0,
-      href: file.url,
+      href: toBackendProxyHref(file.url),
       mimeType: file.mimeType ?? '',
       createdAt: message.createdAt,
     })),

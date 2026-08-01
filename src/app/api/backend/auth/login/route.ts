@@ -2,20 +2,15 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { AUTH_COOKIE_NAME } from '@/constants';
 import type { ApiResponse } from '@/apis/core/types/api-response';
-import type { LoginRequest } from '@/apis/services/auth/_types';
+import type {
+  LoginRequestDto,
+  LoginResponseDto,
+} from '@/apis/services/auth/_dto';
 import type { NextRequest } from 'next/server';
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
-interface LoginResult {
-  tokenType: 'Bearer';
-  user: {
-    role: UserRole;
-    name: string;
-  };
-}
-
-interface LoginBackendResult extends LoginResult {
+interface LoginBackendResultDto extends LoginResponseDto {
   accessToken: string;
 }
 
@@ -27,7 +22,7 @@ function getApiBaseUrl(): string {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const body = (await request.json()) as LoginRequest;
+  const body = (await request.json()) as LoginRequestDto;
 
   const backendResponse = await fetch(`${getApiBaseUrl()}/auth/login`, {
     method: 'POST',
@@ -40,7 +35,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   });
 
   const payload =
-    (await backendResponse.json()) as ApiResponse<LoginBackendResult>;
+    (await backendResponse.json()) as ApiResponse<LoginBackendResultDto>;
 
   if (!backendResponse.ok || !payload.success) {
     return NextResponse.json(payload, {
@@ -74,7 +69,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     path: '/',
   });
 
-  const safeResponse: ApiResponse<LoginResult> = {
+  const safeResponse: ApiResponse<LoginResponseDto> = {
     success: true,
     data: {
       tokenType,

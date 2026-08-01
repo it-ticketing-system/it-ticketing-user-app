@@ -2,7 +2,7 @@ import 'server-only';
 
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { cookies } from 'next/headers';
-import { AUTH_COOKIE_NAME } from '@/constants/auth';
+import { AUTH_COOKIE_NAME } from '@/constants';
 import { createApiExceptionFromPayload, normalizeApiError } from '../api-error';
 import type {
   ApiPaginatedResponse,

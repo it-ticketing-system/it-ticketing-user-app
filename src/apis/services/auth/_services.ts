@@ -1,11 +1,3 @@
-import { ApiRequestFunction } from '@/apis/core/types/api-request.types';
-import {
-  LoginRequestDto,
-  LoginResponseDto,
-  LogoutResponseDto,
-  RegisterRequestDto,
-  RegisterResponseDto,
-} from './_dto';
 import { AUTH_ENDPOINTS } from './_endpoints';
 import {
   type GetMeResponse,
@@ -15,6 +7,15 @@ import {
   type RegisterRequest,
   type RegisterResult,
 } from './_types';
+import type {
+  GetMeResponseDto,
+  LoginRequestDto,
+  LoginResponseDto,
+  LogoutResponseDto,
+  RegisterRequestDto,
+  RegisterResponseDto,
+} from './_dto';
+import type { ApiRequestFunction } from '@/apis/core/types/api-request.types';
 
 export function createAuthServices(request: ApiRequestFunction) {
   async function login(payload: LoginRequest): Promise<LoginResult> {
@@ -48,14 +49,21 @@ export function createAuthServices(request: ApiRequestFunction) {
   }
 
   async function getMe(signal?: AbortSignal): Promise<GetMeResponse> {
-    return request<GetMeResponse>({
+    const dto = await request<GetMeResponseDto>({
       url: AUTH_ENDPOINTS.me,
       method: 'GET',
       signal,
       meta: {
-        auth: 'none',
+        auth: 'required',
       },
     });
+
+    return {
+      id: dto.id,
+      name: dto.name,
+      username: dto.username,
+      profileImageUrl: dto.profileImageUrl,
+    };
   }
 
   async function logout(): Promise<LogoutResult> {
