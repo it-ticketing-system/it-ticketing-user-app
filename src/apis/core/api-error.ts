@@ -26,6 +26,11 @@ export type ApiErrorMessageKey =
   | 'errors.supportNotInDepartment'
   | 'errors.departmentNameAlreadyExists';
 
+export type ApiRequestError = {
+  code: string;
+  messageKey: ApiErrorMessageKey;
+};
+
 const API_ERROR_MESSAGE_KEYS = {
   VALIDATION_ERROR: 'errors.validation',
   INVALID_CREDENTIALS: 'errors.invalidCredentials',
@@ -142,4 +147,13 @@ export function normalizeApiError(error: unknown): ApiException {
     code: 'UNKNOWN_ERROR',
     messageKey: 'errors.generic',
   });
+}
+
+export function toApiRequestError(error: unknown): ApiRequestError {
+  const apiError = normalizeApiError(error);
+
+  return {
+    code: apiError.code,
+    messageKey: apiError.messageKey,
+  };
 }

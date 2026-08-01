@@ -1,6 +1,4 @@
 import { ApiRequestFunction } from '@/apis/core/types/api-request.types';
-import { AuthUserModel } from '@/models';
-import { IUser } from '@/models/user';
 import {
   LoginRequestDto,
   LoginResponseDto,
@@ -9,9 +7,17 @@ import {
   RegisterResponseDto,
 } from './_dto';
 import { AUTH_ENDPOINTS } from './_endpoints';
+import {
+  type GetMeResponse,
+  type LoginRequest,
+  type LoginResult,
+  type LogoutResult,
+  type RegisterRequest,
+  type RegisterResult,
+} from './_types';
 
 export function createAuthServices(request: ApiRequestFunction) {
-  async function login(payload: LoginRequestDto): Promise<AuthUserModel> {
+  async function login(payload: LoginRequest): Promise<LoginResult> {
     const dto = await request<LoginResponseDto, LoginRequestDto>({
       url: AUTH_ENDPOINTS.login,
       method: 'POST',
@@ -26,7 +32,7 @@ export function createAuthServices(request: ApiRequestFunction) {
     };
   }
 
-  async function register(payload: RegisterRequestDto): Promise<AuthUserModel> {
+  async function register(payload: RegisterRequest): Promise<RegisterResult> {
     const dto = await request<RegisterResponseDto, RegisterRequestDto>({
       url: AUTH_ENDPOINTS.register,
       method: 'POST',
@@ -41,18 +47,18 @@ export function createAuthServices(request: ApiRequestFunction) {
     };
   }
 
-  async function getMe(signal?: AbortSignal): Promise<IUser> {
-    return request<IUser>({
+  async function getMe(signal?: AbortSignal): Promise<GetMeResponse> {
+    return request<GetMeResponse>({
       url: AUTH_ENDPOINTS.me,
       method: 'GET',
       signal,
       meta: {
-        auth: 'required',
+        auth: 'none',
       },
     });
   }
 
-  async function logout(): Promise<LogoutResponseDto> {
+  async function logout(): Promise<LogoutResult> {
     return request<LogoutResponseDto, Record<string, never>>({
       url: AUTH_ENDPOINTS.logout,
       method: 'POST',

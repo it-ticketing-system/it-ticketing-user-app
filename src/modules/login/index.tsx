@@ -9,21 +9,23 @@ import {
   TextField,
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { authServices } from '@/apis/services/auth/client';
-import { ROUTES } from '@/constants';
+import { clientAuthServices } from '@/apis/services/auth/client';
+import { QUERY_KEYS, ROUTES } from '@/constants';
 import { usePostRequest } from '@/hooks';
 import { createLoginSchema, type LoginFormValues } from './login.schema';
-import type { AuthUserModel } from '@/models/auth';
+import type { LoginResult } from '@/apis/services/auth/client';
 
 const LoginModule = () => {
   const t = useTranslations('auth.login');
   const tV = useTranslations('auth.validation');
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const schema = useMemo(
     () =>
@@ -51,16 +53,19 @@ const LoginModule = () => {
 
   const { mutateAsync: login, isPending } = usePostRequest<
     LoginFormValues,
-    AuthUserModel
+    LoginResult
   >({
-    requestFn: authServices.login,
+    requestFn: clientAuthServices.login,
 
     getSuccessDescription: (data) =>
       t('toast.success', {
         name: data.name,
       }),
 
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.auth.me,
+      });
       router.push(ROUTES.tickets);
     },
   });
@@ -82,40 +87,26 @@ const LoginModule = () => {
       </div>
 
       <div className="flex w-full flex-col gap-4">
-        <TextField
-          isInvalid={Boolean(errors.username)}
-          className="flex w-full flex-col gap-2"
-        >
-          <Label className="text-body-sm text-foreground font-medium">
-            {t('fields.username.label')}
-          </Label>
+        <TextField fullWidth isInvalid={Boolean(errors.username)}>
+          <Label>{t('fields.username.label')}</Label>
 
           <Input
             {...register('username')}
-            fullWidth
             autoComplete="username"
             placeholder={t('fields.username.placeholder')}
-            className="border-border bg-surface text-foreground h-11 w-full rounded-md border px-3 placeholder:text-neutral-400"
           />
 
           <FieldError>{errors.username?.message}</FieldError>
         </TextField>
 
-        <TextField
-          isInvalid={Boolean(errors.password)}
-          className="flex w-full flex-col gap-2"
-        >
-          <Label className="text-body-sm text-foreground font-medium">
-            {t('fields.password.label')}
-          </Label>
+        <TextField fullWidth isInvalid={Boolean(errors.password)}>
+          <Label>{t('fields.password.label')}</Label>
 
           <Input
             {...register('password')}
-            fullWidth
             type="password"
             autoComplete="current-password"
             placeholder={t('fields.password.placeholder')}
-            className="border-border bg-surface text-foreground h-11 w-full rounded-md border px-3 placeholder:text-neutral-400"
           />
 
           <FieldError>{errors.password?.message}</FieldError>
