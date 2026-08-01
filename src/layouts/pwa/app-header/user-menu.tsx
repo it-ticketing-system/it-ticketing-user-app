@@ -9,10 +9,7 @@ import useAuth from '@/hooks/use-auth';
 import type { Key } from 'react';
 
 const getUserInitials = (name: string) => {
-  const parts = name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+  const parts = name.trim().split(/\s+/).filter(Boolean);
 
   if (parts.length === 0) {
     return '';
@@ -58,19 +55,12 @@ const UserMenu = () => {
         aria-label={t('openProfileMenu')}
         className="h-11 min-w-0 gap-2 rounded-lg px-1 lg:px-2"
       >
-        <Avatar
-          size="md"
-          color="accent"
-          variant="soft"
-          className="size-8 shrink-0"
-        >
+        <Avatar size="sm" color="accent" variant="soft">
           {user?.profileImageUrl ? (
             <Avatar.Image src={user.profileImageUrl} alt={userName} />
           ) : null}
 
-          <Avatar.Fallback className="text-body-sm font-semibold">
-            {userInitials}
-          </Avatar.Fallback>
+          <Avatar.Fallback>{userInitials}</Avatar.Fallback>
         </Avatar>
 
         <span className="text-body-sm text-foreground hidden max-w-40 truncate font-medium lg:block">

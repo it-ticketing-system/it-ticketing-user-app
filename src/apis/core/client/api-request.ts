@@ -36,8 +36,14 @@ export async function clientApiPaginatedRequest<TItem, TBody = unknown>(
     TBody
   >(config);
 
+  const payload = response.data;
+
+  if (!payload.success) {
+    throw createApiExceptionFromPayload(payload.error, response.status);
+  }
+
   return {
-    items: response.data.data,
-    meta: response.data.meta,
+    items: payload.data,
+    meta: payload.meta,
   };
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import { toast } from '@heroui/react';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
 import { ApiException, normalizeApiError } from '@/apis/core/api-error';
 
 interface BaseOptions {
@@ -69,91 +69,63 @@ function usePostRequest<TPayload, TResponse>({
   | UsePostRequestWithoutPayloadOptions<TResponse>) {
   const t = useTranslations('common');
 
-  const [data, setData] = useState<TResponse | null>(null);
-  const [error, setError] = useState<ApiException | null>(null);
-  const [isPending, setIsPending] = useState(false);
-
-  const mutateAsync = useCallback(
-    async (payload?: TPayload): Promise<TResponse> => {
-      setIsPending(true);
-      setError(null);
-
+  const mutation = useMutation<TResponse, ApiException, TPayload | undefined>({
+    mutationFn: async (payload) => {
       try {
-        const response = await (
+        return await (
           requestFn as (payload?: TPayload) => Promise<TResponse>
         )(payload);
-
-        setData(response);
-
-        if (showSuccessToast) {
-          const description =
-            (
-              getSuccessDescription as
-                ((data: TResponse, payload?: TPayload) => string) | undefined
-            )?.(response, payload) ?? t('toast.successDescription');
-
-          toast.success(t('toast.successTitle'), {
-            description,
-          });
-        }
-
-        await (
-          onSuccess as
-            | ((data: TResponse, payload?: TPayload) => void | Promise<void>)
-            | undefined
-        )?.(response, payload);
-
-        return response;
       } catch (error) {
-        const apiError = normalizeApiError(error);
-
-        setError(apiError);
-
-        if (showErrorToast) {
-          toast.danger(t('toast.errorTitle'), {
-            description: t(apiError.messageKey),
-          });
-        }
-
-        await (
-          onError as
-            | ((
-                error: ApiException,
-                payload?: TPayload,
-              ) => void | Promise<void>)
-            | undefined
-        )?.(apiError, payload);
-
-        throw apiError;
-      } finally {
-        setIsPending(false);
+        throw normalizeApiError(error);
       }
     },
-    [
-      requestFn,
-      showSuccessToast,
-      showErrorToast,
-      getSuccessDescription,
-      onSuccess,
-      onError,
-      t,
-    ],
-  );
 
-  const reset = useCallback(() => {
-    setData(null);
-    setError(null);
-    setIsPending(false);
-  }, []);
+    onSuccess: async (response, payload) => {
+      if (showSuccessToast) {
+        const description =
+          (
+            getSuccessDescription as
+              | ((data: TResponse, payload?: TPayload) => string)
+              | undefined
+          )?.(response, payload) ?? t('toast.successDescription');
+
+        toast.success(t('toast.successTitle'), {
+          description,
+        });
+      }
+
+      await (
+        onSuccess as
+          | ((data: TResponse, payload?: TPayload) => void | Promise<void>)
+          | undefined
+      )?.(response, payload);
+    },
+
+    onError: async (apiError, payload) => {
+      if (showErrorToast) {
+        toast.danger(t('toast.errorTitle'), {
+          description: t(apiError.messageKey),
+        });
+      }
+
+      await (
+        onError as
+          | ((error: ApiException, payload?: TPayload) => void | Promise<void>)
+          | undefined
+      )?.(apiError, payload);
+    },
+  });
 
   return {
-    data,
-    error,
-    isPending,
-    isSuccess: data !== null && error === null,
-    isError: error !== null,
-    mutateAsync,
-    reset,
+    data: mutation.data ?? null,
+    error: mutation.error,
+    isPending: mutation.isPending,
+    isSuccess: mutation.data !== undefined && mutation.error === null,
+    isError: mutation.error !== null,
+    mutateAsync: mutation.mutateAsync as (
+      payload?: TPayload,
+    ) => Promise<TResponse>,
+    reset: mutation.reset,
   };
 }
 

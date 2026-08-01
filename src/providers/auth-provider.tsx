@@ -1,14 +1,16 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
-import { authServices } from '@/apis/services/auth/client';
-import { ROUTES } from '@/constants';
+import { clientAuthServices } from '@/apis/services/auth/client';
+import { QUERY_KEYS, ROUTES } from '@/constants';
 import { AuthContext } from '@/contexts/auth-context';
 import { useGetRequest } from '@/hooks';
 
 const AuthProvider: FCC = ({ children }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const {
@@ -19,7 +21,8 @@ const AuthProvider: FCC = ({ children }) => {
     refetch,
     reset,
   } = useGetRequest({
-    requestFn: authServices.getMe,
+    queryKey: QUERY_KEYS.auth.me,
+    requestFn: clientAuthServices.getMe,
     showErrorToast: false,
   });
 
@@ -49,14 +52,15 @@ const AuthProvider: FCC = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       setIsLoggingOut(true);
-      await authServices.logout();
+      await clientAuthServices.logout();
+      queryClient.clear();
       reset();
 
       router.replace(ROUTES.login);
     } finally {
       setIsLoggingOut(false);
     }
-  }, [reset, router]);
+  }, [queryClient, reset, router]);
 
   const value = useMemo(
     () => ({

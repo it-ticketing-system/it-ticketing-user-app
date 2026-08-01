@@ -3,6 +3,13 @@
 import { clientApiRequest } from '@/apis/core/client/api-request';
 import { createAuthServices } from './_services';
 
-export const authServices = createAuthServices(clientApiRequest);
+export const clientAuthServices = createAuthServices(clientApiRequest);
 
-export type { LoginRequestDto, RegisterRequestDto } from './_dto';
+export type {
+  GetMeResponse,
+  LoginRequest,
+  LoginResult,
+  LogoutResult,
+  RegisterRequest,
+  RegisterResult,
+} from './_types';
