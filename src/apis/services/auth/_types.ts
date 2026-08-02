@@ -20,3 +20,21 @@ export interface LogoutResult {
 }
 
 export type GetMeResponse = IUser;
+
+export interface UpdateProfileRequest {
+  name?: string;
+  username?: string;
+  profileImageFileId?: number | null;
+}
+
+export type UpdateProfileResult = IUser;
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface ChangePasswordResult {
+  message: string;
+}

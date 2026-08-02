@@ -7,6 +7,7 @@ import header from '../../messages/fa/header.json';
 import home from '../../messages/fa/home.json';
 import mainLayout from '../../messages/fa/mainLayout.json';
 import pageHeader from '../../messages/fa/pageHeader.json';
+import profile from '../../messages/fa/profile.json';
 import pwaLayout from '../../messages/fa/pwaLayout.json';
 import ticketDetails from '../../messages/fa/ticketDetails.json';
 import tickets from '../../messages/fa/tickets.json';
@@ -23,6 +24,7 @@ export default getRequestConfig(async () => {
       auth,
       common,
       pageHeader,
+      profile,
       pwaLayout,
       tickets,
       createTicket,

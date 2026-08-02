@@ -1,19 +1,27 @@
 import { AUTH_ENDPOINTS } from './_endpoints';
+import { toUserModel } from './_mappers';
 import {
+  type ChangePasswordRequest,
+  type ChangePasswordResult,
   type GetMeResponse,
   type LoginRequest,
   type LoginResult,
   type LogoutResult,
   type RegisterRequest,
   type RegisterResult,
+  type UpdateProfileRequest,
+  type UpdateProfileResult,
 } from './_types';
 import type {
+  ChangePasswordRequestDto,
+  ChangePasswordResponseDto,
   GetMeResponseDto,
   LoginRequestDto,
   LoginResponseDto,
   LogoutResponseDto,
   RegisterRequestDto,
   RegisterResponseDto,
+  UpdateProfileRequestDto,
 } from './_dto';
 import type { ApiRequestFunction } from '@/apis/core/types/api-request.types';
 
@@ -58,12 +66,7 @@ export function createAuthServices(request: ApiRequestFunction) {
       },
     });
 
-    return {
-      id: dto.id,
-      name: dto.name,
-      username: dto.username,
-      profileImageUrl: dto.profileImageUrl,
-    };
+    return toUserModel(dto);
   }
 
   async function logout(): Promise<LogoutResult> {
@@ -78,10 +81,48 @@ export function createAuthServices(request: ApiRequestFunction) {
     });
   }
 
+  async function updateProfile(
+    payload: UpdateProfileRequest,
+  ): Promise<UpdateProfileResult> {
+    const dto = await request<GetMeResponseDto, UpdateProfileRequestDto>({
+      url: AUTH_ENDPOINTS.updateProfile,
+      method: 'PATCH',
+      data: {
+        name: payload.name,
+        username: payload.username,
+        profileImageFileId: payload.profileImageFileId,
+      },
+      meta: {
+        auth: 'required',
+      },
+    });
+
+    return toUserModel(dto);
+  }
+
+  async function changePassword(
+    payload: ChangePasswordRequest,
+  ): Promise<ChangePasswordResult> {
+    return request<ChangePasswordResponseDto, ChangePasswordRequestDto>({
+      url: AUTH_ENDPOINTS.changePassword,
+      method: 'PATCH',
+      data: {
+        currentPassword: payload.currentPassword,
+        newPassword: payload.newPassword,
+        newPasswordConfirmation: payload.confirmPassword,
+      },
+      meta: {
+        auth: 'required',
+      },
+    });
+  }
+
   return {
     login,
     register,
     getMe,
     logout,
+    updateProfile,
+    changePassword,
   };
 }

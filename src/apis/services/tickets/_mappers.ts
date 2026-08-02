@@ -1,5 +1,9 @@
 import { ROUTES } from '@/constants';
-import { toBackendProxyHref } from '@/utils';
+import {
+  formatPersianDateTime,
+  formatPersianRelativeDateTime,
+  toBackendProxyHref,
+} from '@/utils';
 import type {
   CreateTicketRequestDto,
   GetMyTicketsRequestDto,
@@ -36,59 +40,6 @@ const TICKET_STATUS_DTO_MAP = {
   closed: 'CLOSED',
 } as const satisfies Record<TicketStatus, UserTicketStatusDto>;
 
-const timeFormatter = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: 'Asia/Tehran',
-});
-
-const dateTimeFormatter = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: 'Asia/Tehran',
-});
-
-const relativeFormatter = new Intl.RelativeTimeFormat('fa-IR', {
-  numeric: 'auto',
-});
-
-const toDayStart = (date: Date): number => {
-  return new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  ).getTime();
-};
-
-const formatLastUpdatedLabel = (value: string): string => {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  const now = new Date();
-  const dayDiff = Math.round(
-    (toDayStart(date) - toDayStart(now)) / (24 * 60 * 60 * 1000),
-  );
-  const timeLabel = timeFormatter.format(date);
-
-  return `${relativeFormatter.format(dayDiff, 'day')}\u060C ${timeLabel}`;
-};
-
-const formatDateTimeLabel = (value: string): string => {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return dateTimeFormatter.format(date);
-};
-
 export const toGetMyTicketsRequestDto = (
   params: GetMyTicketsRequest,
 ): GetMyTicketsRequestDto => ({
@@ -118,7 +69,7 @@ export const toTicketListItem = (ticket: UserTicketListItemDto): ITicket => ({
   title: ticket.title,
   departmentName: ticket.department.name,
   status: TICKET_STATUS_MAP[ticket.status],
-  lastUpdatedLabel: formatLastUpdatedLabel(ticket.lastUpdatedAt),
+  lastUpdatedLabel: formatPersianRelativeDateTime(ticket.lastUpdatedAt),
   detailsHref: ROUTES.ticketDetails(String(ticket.id)),
 });
 
@@ -128,8 +79,8 @@ export const toTicket = (ticket: UserTicketDetailsDto): ITicket => ({
   title: ticket.title,
   departmentName: ticket.department.name,
   status: TICKET_STATUS_MAP[ticket.status],
-  createdAtLabel: formatDateTimeLabel(ticket.createdAt),
-  lastUpdatedLabel: formatLastUpdatedLabel(ticket.updatedAt),
+  createdAtLabel: formatPersianDateTime(ticket.createdAt),
+  lastUpdatedLabel: formatPersianRelativeDateTime(ticket.updatedAt),
   detailsHref: ROUTES.ticketDetails(String(ticket.id)),
 });
 
@@ -142,9 +93,11 @@ export const toTicketMessage = (
     id: String(message.id),
     type: isUser ? 'user' : 'support',
     senderName: message.sender.name,
-    senderAvatarUrl: message.sender.profileImageUrl ?? undefined,
+    senderAvatarUrl: message.sender.profileImageUrl
+      ? toBackendProxyHref(message.sender.profileImageUrl)
+      : undefined,
     body: message.body,
-    createdAtLabel: formatDateTimeLabel(message.createdAt),
+    createdAtLabel: formatPersianDateTime(message.createdAt),
     attachments: message.files.map((file) => ({
       id: file.id,
       name: file.originalName,

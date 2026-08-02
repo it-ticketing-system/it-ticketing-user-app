@@ -4,7 +4,7 @@ import type { ButtonVariants } from '@heroui/react';
 import type { LucideIcon } from 'lucide-react';
 
 export type PwaPageHeaderMessageKey =
-  'tickets' | 'createTicket' | 'ticketDetails';
+  'tickets' | 'createTicket' | 'ticketDetails' | 'profile';
 
 export type PwaPageHeaderActionConfig = {
   href: string;
@@ -51,6 +51,10 @@ export const pwaPageHeaderRoutes: readonly PwaPageHeaderConfig[] = [
       size: 'md',
       variant: 'primary',
     },
+  },
+  {
+    messageKey: 'profile',
+    match: (pathname) => pathname === ROUTES.profile,
   },
 ] as const;
 

@@ -7,6 +7,11 @@ export {
   ICON_SIZE_CLASS,
 } from './icon-sizes';
 export { PAGE_SIZE } from './pagination';
+export {
+  PROFILE_IMAGE_ACCEPT,
+  PROFILE_IMAGE_ALLOWED_EXTENSIONS,
+  PROFILE_IMAGE_MAX_SIZE,
+} from './profile-image';
 export { QUERY_KEYS } from './query-keys';
 export {
   TICKET_ATTACHMENT_ACCEPT,
