@@ -2,6 +2,7 @@
 
 import { toast } from '@heroui/react';
 import {
+  keepPreviousData as keepPreviousQueryData,
   useQuery,
   useQueryClient,
   type QueryKey,
@@ -15,6 +16,9 @@ interface UseGetRequestOptions<TResponse> {
   queryKey: QueryKey;
   requestFn: (signal?: AbortSignal) => Promise<TResponse>;
   enabled?: boolean;
+  initialData?: TResponse | (() => TResponse | undefined);
+  keepPreviousData?: boolean;
+  staleTime?: number;
   showErrorToast?: boolean;
   onSuccess?: (data: TResponse) => void | Promise<void>;
   onError?: (error: ApiException) => void | Promise<void>;
@@ -27,6 +31,7 @@ interface UseGetRequestResult<TResponse> {
   isFetching: boolean;
   isSuccess: boolean;
   isError: boolean;
+  isFetched: boolean;
   refetch: () => Promise<TResponse>;
   reset: () => void;
 }
@@ -42,6 +47,9 @@ function useGetRequest<TResponse>({
   queryKey,
   requestFn,
   enabled = true,
+  initialData,
+  keepPreviousData = false,
+  staleTime,
   showErrorToast = true,
   onSuccess,
   onError,
@@ -65,6 +73,9 @@ function useGetRequest<TResponse>({
         throw normalizeApiError(error);
       }
     },
+    initialData,
+    placeholderData: keepPreviousData ? keepPreviousQueryData : undefined,
+    staleTime,
   });
 
   useEffect(() => {
@@ -130,6 +141,7 @@ function useGetRequest<TResponse>({
     isFetching: query.isFetching,
     isSuccess: query.data !== undefined && error === null,
     isError: error !== null,
+    isFetched: query.isFetched,
     refetch,
     reset,
   };

@@ -7,3 +7,5 @@ export { default as TicketsModule } from './tickets';
 export { getTicketDetailsInitialData } from './ticket-details/ticket-details.server';
 export type { TicketsSearchParams } from './tickets/tickets-query';
 export { default as ProfileModule } from './profile';
+export { default as NotificationsModule } from './notifications';
+export type { NotificationsSearchParams } from './notifications/notifications-query';
