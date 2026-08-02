@@ -7,6 +7,7 @@ import header from './messages/fa/header.json';
 import home from './messages/fa/home.json';
 import mainLayout from './messages/fa/mainLayout.json';
 import pageHeader from './messages/fa/pageHeader.json';
+import profile from './messages/fa/profile.json';
 import pwaLayout from './messages/fa/pwaLayout.json';
 import ticketDetails from './messages/fa/ticketDetails.json';
 import tickets from './messages/fa/tickets.json';
@@ -19,6 +20,7 @@ type Messages = {
   footer: typeof footer;
   common: typeof common;
   pageHeader: typeof pageHeader;
+  profile: typeof profile;
   auth: typeof auth;
   tickets: typeof tickets;
   createTicket: typeof createTicket;
