@@ -20,10 +20,6 @@ import {
 import NotificationLink from './notification-link';
 import UserMenu from './user-menu';
 
-type AppHeaderProps = {
-  unreadNotificationsCount?: number;
-};
-
 type PageHeaderActionProps = {
   action: PwaPageHeaderActionConfig;
   label: string;
@@ -53,7 +49,7 @@ const PageHeaderAction = ({ action, label }: PageHeaderActionProps) => {
   );
 };
 
-const AppHeader = ({ unreadNotificationsCount = 1000 }: AppHeaderProps) => {
+const AppHeader = () => {
   const t = useTranslations('pwaLayout.appHeader');
   const tCommon = useTranslations('common');
   const tPageHeader = useTranslations('pageHeader');
@@ -134,9 +130,7 @@ const AppHeader = ({ unreadNotificationsCount = 1000 }: AppHeaderProps) => {
             />
           ) : null}
 
-          <NotificationLink
-            unreadNotificationsCount={unreadNotificationsCount}
-          />
+          <NotificationLink />
           <UserMenu />
         </div>
       </div>

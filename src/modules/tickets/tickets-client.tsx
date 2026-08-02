@@ -1,11 +1,9 @@
 'use client';
 
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { toApiRequestError, type ApiRequestError } from '@/apis/core/api-error';
 import { clientLookupServices } from '@/apis/services/lookups/client';
 import { clientTicketServices } from '@/apis/services/tickets/client';
 import { QUERY_KEYS } from '@/constants';
-import { useQueryState } from '@/hooks';
+import { useGetRequest, useQueryState } from '@/hooks';
 import { getPatchValue } from '@/utils';
 import MyTicketsFilters from './ticket-filters';
 import {
@@ -19,6 +17,7 @@ import {
   FILTER_QUERY_KEYS,
   parseTicketFilters,
 } from './tickets-query';
+import type { ApiRequestError } from '@/apis/core/api-error';
 import type { IDepartmentLookup } from '@/models';
 
 type TicketsClientProps = {
@@ -47,32 +46,34 @@ const TicketsClient = ({
 
   const ticketsParams = createMyTicketsParams(filters);
 
-  const departmentsQuery = useQuery({
+  const departmentsQuery = useGetRequest({
     queryKey: QUERY_KEYS.lookups.departments,
-    queryFn: async ({ signal }) => clientLookupServices.getDepartments(signal),
+    requestFn: async (signal) => clientLookupServices.getDepartments(signal),
     initialData: initialDepartments,
+    showErrorToast: false,
     staleTime: 5 * 60_000,
   });
 
-  const ticketsQuery = useQuery({
+  const ticketsQuery = useGetRequest({
     queryKey: QUERY_KEYS.tickets.list(ticketsParams),
-    queryFn: async ({ signal }) =>
+    requestFn: async (signal) =>
       clientTicketServices.getMyTickets(ticketsParams, signal),
     initialData: () =>
       areTicketFiltersEqual(filters, initialFilters)
         ? initialTickets
         : undefined,
-    placeholderData: keepPreviousData,
+    keepPreviousData: true,
+    showErrorToast: false,
     staleTime: 30_000,
   });
 
-  const ticketsError = ticketsQuery.error
-    ? toApiRequestError(ticketsQuery.error)
-    : initialTicketsError &&
+  const ticketsError =
+    ticketsQuery.error ??
+    (initialTicketsError &&
         areTicketFiltersEqual(filters, initialFilters) &&
         !ticketsQuery.isFetched
       ? initialTicketsError
-      : null;
+      : null);
 
   const filterValue: TicketFiltersValue = {
     search: filters.search,
@@ -142,7 +143,7 @@ const TicketsClient = ({
     <TicketsTable
       data={ticketsQuery.data ?? initialTickets}
       error={ticketsError}
-      isLoading={ticketsQuery.isPending}
+      isLoading={ticketsQuery.isLoading}
       isPending={ticketsQuery.isFetching}
       onPageChange={changePage}
       onRetry={retry}
