@@ -6,6 +6,7 @@ import footer from '../../messages/fa/footer.json';
 import header from '../../messages/fa/header.json';
 import home from '../../messages/fa/home.json';
 import mainLayout from '../../messages/fa/mainLayout.json';
+import notifications from '../../messages/fa/notifications.json';
 import pageHeader from '../../messages/fa/pageHeader.json';
 import profile from '../../messages/fa/profile.json';
 import pwaLayout from '../../messages/fa/pwaLayout.json';
@@ -18,6 +19,7 @@ export default getRequestConfig(async () => {
 
     messages: {
       mainLayout,
+      notifications,
       header,
       home,
       footer,
