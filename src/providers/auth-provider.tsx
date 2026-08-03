@@ -2,11 +2,18 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { clientAuthServices } from '@/apis/services/auth/client';
+import { clientPushServices } from '@/apis/services/push/client';
 import { QUERY_KEYS, ROUTES } from '@/constants';
 import { AuthContext } from '@/contexts';
 import { useGetRequest } from '@/hooks';
+import {
+  clearAllPersistedQueryCaches,
+  getCurrentPushSubscription,
+  unsubscribeCurrentBrowserFromPush,
+} from '@/utils';
+import QueryPersistenceProvider from './query-persistence-provider';
 
 const AuthProvider: FCC = ({ children }) => {
   const router = useRouter();
@@ -28,6 +35,17 @@ const AuthProvider: FCC = ({ children }) => {
 
   const isUnauthenticated = error?.status === 401;
   const isAuthenticated = Boolean(user) && !isUnauthenticated;
+
+  useEffect(() => {
+    if (!isUnauthenticated) {
+      return;
+    }
+
+    void clearAllPersistedQueryCaches().catch(() => undefined);
+    queryClient.clear();
+    reset();
+    router.replace(ROUTES.login);
+  }, [isUnauthenticated, queryClient, reset, router]);
 
   const status = useMemo(() => {
     if (isLoading) {
@@ -52,7 +70,21 @@ const AuthProvider: FCC = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       setIsLoggingOut(true);
-      await clientAuthServices.logout();
+      const pushSubscription = await getCurrentPushSubscription().catch(
+        () => null,
+      );
+
+      if (pushSubscription) {
+        await clientPushServices
+          .unsubscribeCurrentBrowser({
+            endpoint: pushSubscription.endpoint,
+          })
+          .catch(() => undefined);
+        await unsubscribeCurrentBrowserFromPush().catch(() => undefined);
+      }
+
+      await clientAuthServices.logout().catch(() => undefined);
+      await clearAllPersistedQueryCaches().catch(() => undefined);
       queryClient.clear();
       reset();
 
@@ -91,7 +123,12 @@ const AuthProvider: FCC = ({ children }) => {
     ],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      <QueryPersistenceProvider userId={user?.id ?? null} />
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

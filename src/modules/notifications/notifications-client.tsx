@@ -7,6 +7,7 @@ import { QUERY_KEYS } from '@/constants';
 import {
   useGetRequest,
   usePostRequest,
+  usePwa,
   useQueryState,
   useUnreadNotificationsCount,
 } from '@/hooks';
@@ -39,6 +40,7 @@ const NotificationsClient = ({
 }: NotificationsClientProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { isOnline } = usePwa();
   const { getQuery, setQuery, updateQueries, removeQueries } = useQueryState();
   const unreadNotificationsCount = useUnreadNotificationsCount();
 
@@ -132,7 +134,7 @@ const NotificationsClient = ({
   const openNotification = (notification: NotificationListItem) => {
     const href = notification.relatedEntity?.href;
 
-    if (!notification.isRead) {
+    if (!notification.isRead && isOnline) {
       void markReadMutation
         .mutateAsync(notification.id)
         .catch(() => undefined);
@@ -148,6 +150,10 @@ const NotificationsClient = ({
   };
 
   const markAllRead = () => {
+    if (!isOnline) {
+      return;
+    }
+
     void markAllReadMutation.mutateAsync();
   };
 
@@ -170,6 +176,7 @@ const NotificationsClient = ({
         <NotificationFilters
           activeTab={filters.tab}
           isPending={notificationsQuery.isFetching}
+          isOnline={isOnline}
           isMarkAllReadPending={markAllReadMutation.isPending}
           unreadCount={unreadNotificationsCount}
           onMarkAllRead={markAllRead}

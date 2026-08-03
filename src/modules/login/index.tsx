@@ -15,15 +15,17 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { clientAuthServices } from '@/apis/services/auth/client';
-import { PasswordField } from '@/components/shared';
+import { OnlineOnlyNotice, PasswordField } from '@/components/shared';
 import { QUERY_KEYS, ROUTES } from '@/constants';
-import { usePostRequest } from '@/hooks';
+import { usePostRequest, usePwa } from '@/hooks';
 import { createLoginSchema, type LoginFormValues } from './login.schema';
 import type { LoginResult } from '@/apis/services/auth/client';
 
 const LoginModule = () => {
   const t = useTranslations('auth.login');
   const tV = useTranslations('auth.validation');
+  const tPwa = useTranslations('pwa.onlineOnly');
+  const { isOnline } = usePwa();
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -73,6 +75,10 @@ const LoginModule = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
+    if (!isOnline) {
+      return;
+    }
+
     await login(data);
   };
 
@@ -95,6 +101,7 @@ const LoginModule = () => {
           <Input
             {...register('username')}
             autoComplete="username"
+            disabled={!isOnline || isPending}
             placeholder={t('fields.username.placeholder')}
           />
 
@@ -109,11 +116,22 @@ const LoginModule = () => {
           autoComplete="current-password"
           showPasswordLabel={t('fields.password.show')}
           hidePasswordLabel={t('fields.password.hide')}
+          isDisabled={!isOnline || isPending}
         />
       </div>
 
+      {!isOnline ? (
+        <OnlineOnlyNotice>{tPwa('login')}</OnlineOnlyNotice>
+      ) : null}
+
       <div className="flex w-full flex-col gap-3">
-        <Button fullWidth size="md" type="submit" isPending={isPending}>
+        <Button
+          fullWidth
+          size="md"
+          type="submit"
+          isPending={isPending}
+          isDisabled={!isOnline}
+        >
           {t('actions.submit')}
         </Button>
 

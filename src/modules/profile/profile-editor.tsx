@@ -16,13 +16,14 @@ import {
   type UpdateProfileRequest,
 } from '@/apis/services/auth/client';
 import { clientFileServices } from '@/apis/services/files/client';
+import { OnlineOnlyNotice } from '@/components/shared';
 import {
   ICON_SIZE_CLASS,
   PROFILE_IMAGE_ACCEPT,
   PROFILE_IMAGE_ALLOWED_EXTENSIONS,
   PROFILE_IMAGE_MAX_SIZE,
 } from '@/constants';
-import { usePostRequest } from '@/hooks';
+import { usePostRequest, usePwa } from '@/hooks';
 import {
   formatFileSize,
   formatPersianDateTime,
@@ -75,6 +76,8 @@ const formatProfileDateTime = (value: string | null) => {
 const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
   const t = useTranslations('profile.editor');
   const tValidation = useTranslations('profile.validation');
+  const tPwa = useTranslations('pwa.onlineOnly');
+  const { isOnline } = usePwa();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] =
     useState<SelectedProfileImage | null>(null);
@@ -195,7 +198,7 @@ const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
   };
 
   const onSubmit = async (data: ProfileInformationFormValues) => {
-    if (!hasChanges) {
+    if (!hasChanges || !isOnline) {
       return;
     }
 
@@ -216,6 +219,7 @@ const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
               ref={fileInputRef}
               type="file"
               accept={PROFILE_IMAGE_ACCEPT}
+              disabled={!isOnline || isPending}
               className="sr-only"
               onChange={handleFileChange}
             />
@@ -264,6 +268,7 @@ const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
                     variant="outline"
                     size="md"
                     fullWidth
+                    isDisabled={!isOnline || isPending}
                     className="sm:w-auto"
                     onPress={() => fileInputRef.current?.click()}
                   >
@@ -295,12 +300,17 @@ const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
             <p className="text-caption text-danger-600">{fileError}</p>
           ) : null}
 
+          {!isOnline ? (
+            <OnlineOnlyNotice>{tPwa('profile')}</OnlineOnlyNotice>
+          ) : null}
+
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField fullWidth isInvalid={Boolean(errors.name)}>
               <Label>{t('fields.name.label')}</Label>
               <Input
                 {...register('name')}
                 autoComplete="name"
+                disabled={!isOnline || isPending}
                 placeholder={t('fields.name.placeholder')}
               />
               <FieldError>{errors.name?.message}</FieldError>
@@ -311,6 +321,7 @@ const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
               <Input
                 {...register('username')}
                 autoComplete="username"
+                disabled={!isOnline || isPending}
                 placeholder={t('fields.username.placeholder')}
               />
               <FieldError>{errors.username?.message}</FieldError>
@@ -345,7 +356,7 @@ const ProfileEditor = ({ user, onProfileRefresh }: ProfileEditorProps) => {
               size="md"
               variant="primary"
               className="lg:ms-auto lg:w-auto"
-              isDisabled={!hasChanges || isPending}
+              isDisabled={!hasChanges || isPending || !isOnline}
               isPending={isPending}
             >
               <Save aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
