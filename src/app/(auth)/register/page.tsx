@@ -1,16 +1,8 @@
-import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
-import { RegisterModule } from '@/modules';
+import { redirect } from 'next/navigation';
+import { ROUTES } from '@/constants';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('auth.register');
+const Page = () => {
+  redirect(ROUTES.register);
+};
 
-  return {
-    title: t('meta.title'),
-    description: t('meta.description'),
-  };
-}
-
-export default function Register() {
-  return <RegisterModule />;
-}
+export default Page;

@@ -23,8 +23,9 @@ import {
   type CreateTicketRequest,
   type CreateTicketResult,
 } from '@/apis/services/tickets/client';
+import { OnlineOnlyNotice } from '@/components/shared';
 import { ICON_SIZE_CLASS, QUERY_KEYS, ROUTES } from '@/constants';
-import { usePostRequest } from '@/hooks';
+import { usePostRequest, usePwa } from '@/hooks';
 import AttachmentField from './attachment-field';
 import {
   createTicketSchema,
@@ -54,6 +55,8 @@ const CreateTicketForm = ({
 }: CreateTicketFormProps) => {
   const t = useTranslations('createTicket.form');
   const tV = useTranslations('createTicket.validation');
+  const tPwa = useTranslations('pwa.onlineOnly');
+  const { isOnline } = usePwa();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -134,6 +137,10 @@ const CreateTicketForm = ({
   });
 
   const onSubmit = async (data: CreateTicketFormValues) => {
+    if (!isOnline) {
+      return;
+    }
+
     await createTicket(data);
   };
 
@@ -215,6 +222,10 @@ const CreateTicketForm = ({
           </p>
         ) : null}
 
+        {!isOnline ? (
+          <OnlineOnlyNotice>{tPwa('createTicket')}</OnlineOnlyNotice>
+        ) : null}
+
         <TextField fullWidth isInvalid={Boolean(errors.initialMessage)}>
           <Label>{t('fields.initialMessage.label')}</Label>
 
@@ -241,7 +252,7 @@ const CreateTicketForm = ({
 
         <AttachmentField
           files={files}
-          isDisabled={isPending}
+          isDisabled={isPending || !isOnline}
           onFilesChange={setFiles}
         />
       </div>
@@ -259,7 +270,7 @@ const CreateTicketForm = ({
         <Button
           type="submit"
           isPending={isPending}
-          isDisabled={!hasDepartments}
+          isDisabled={!hasDepartments || !isOnline}
           className="h-11 w-full rounded-md lg:w-auto lg:min-w-36"
         >
           <Send aria-hidden="true" className={ICON_SIZE_CLASS.sm} />

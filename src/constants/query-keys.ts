@@ -29,4 +29,8 @@ export const QUERY_KEYS = {
       [...NOTIFICATION_LISTS_QUERY_KEY, params] as const,
     unreadCount: [...NOTIFICATIONS_QUERY_KEY, 'unread-count'] as const,
   },
+  push: {
+    config: ['push', 'config'] as const,
+    subscriptions: ['push', 'subscriptions'] as const,
+  },
 } as const;

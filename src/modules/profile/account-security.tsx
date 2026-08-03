@@ -8,8 +8,8 @@ import {
   type ChangePasswordRequest,
   type ChangePasswordResult,
 } from '@/apis/services/auth/client';
-import { PasswordField } from '@/components/shared';
-import { usePostRequest } from '@/hooks';
+import { OnlineOnlyNotice, PasswordField } from '@/components/shared';
+import { usePostRequest, usePwa } from '@/hooks';
 import {
   createProfilePasswordSchema,
   type ProfilePasswordFormValues,
@@ -19,6 +19,8 @@ import SectionHeader from './section-header';
 const AccountSecurity = () => {
   const t = useTranslations('profile.security');
   const tValidation = useTranslations('profile.validation');
+  const tPwa = useTranslations('pwa.onlineOnly');
+  const { isOnline } = usePwa();
 
   const schema = createProfilePasswordSchema({
     currentPasswordRequired: tValidation('currentPassword.required'),
@@ -60,6 +62,10 @@ const AccountSecurity = () => {
   });
 
   const onSubmit = async (data: ProfilePasswordFormValues) => {
+    if (!isOnline) {
+      return;
+    }
+
     await changePassword(data);
   };
 
@@ -88,6 +94,7 @@ const AccountSecurity = () => {
                 autoComplete="current-password"
                 showPasswordLabel={t('fields.currentPassword.show')}
                 hidePasswordLabel={t('fields.currentPassword.hide')}
+                isDisabled={!isOnline || isPending}
               />
             </div>
 
@@ -99,6 +106,7 @@ const AccountSecurity = () => {
               autoComplete="new-password"
               showPasswordLabel={t('fields.newPassword.show')}
               hidePasswordLabel={t('fields.newPassword.hide')}
+              isDisabled={!isOnline || isPending}
             />
 
             <PasswordField
@@ -109,8 +117,13 @@ const AccountSecurity = () => {
               autoComplete="new-password"
               showPasswordLabel={t('fields.confirmPassword.show')}
               hidePasswordLabel={t('fields.confirmPassword.hide')}
+              isDisabled={!isOnline || isPending}
             />
           </div>
+
+          {!isOnline ? (
+            <OnlineOnlyNotice>{tPwa('password')}</OnlineOnlyNotice>
+          ) : null}
 
           <div className="border-separator flex border-t pt-4">
             <Button
@@ -119,6 +132,7 @@ const AccountSecurity = () => {
               size="md"
               variant="primary"
               className="lg:ms-auto lg:w-auto"
+              isDisabled={!isOnline}
               isPending={isPending}
             >
               {t('actions.submit')}

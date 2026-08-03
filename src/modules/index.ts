@@ -8,4 +8,5 @@ export { getTicketDetailsInitialData } from './ticket-details/ticket-details.ser
 export type { TicketsSearchParams } from './tickets/tickets-query';
 export { default as ProfileModule } from './profile';
 export { default as NotificationsModule } from './notifications';
+export { default as OfflineModule } from './offline';
 export type { NotificationsSearchParams } from './notifications/notifications-query';
