@@ -13,7 +13,7 @@ import {
   type SendTicketMessageRequest,
   type SendTicketMessageResult,
 } from '@/apis/services/tickets/client';
-import { SelectedFilesList } from '@/components/shared';
+import { OnlineOnlyNotice, SelectedFilesList } from '@/components/shared';
 import {
   QUERY_KEYS,
   ICON_SIZE_CLASS,
@@ -22,7 +22,7 @@ import {
   TICKET_ATTACHMENT_MAX_FILES,
   TICKET_ATTACHMENT_MAX_SIZE,
 } from '@/constants';
-import { usePostRequest } from '@/hooks';
+import { usePostRequest, usePwa } from '@/hooks';
 import { cn, getFileExtension, isAllowedFileExtension } from '@/utils';
 import {
   createMessageComposerSchema,
@@ -36,6 +36,8 @@ interface MessageComposerProps {
 
 const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
   const t = useTranslations('ticketDetails.composer');
+  const tPwa = useTranslations('pwa.onlineOnly');
+  const { isOnline } = usePwa();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -161,14 +163,14 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
   });
 
   const onSubmit = async (data: MessageComposerFormValues) => {
-    if (isClosed || isPending) {
+    if (isClosed || isPending || !isOnline) {
       return;
     }
 
     await sendMessage(data);
   };
 
-  const isSubmitDisabled = isClosed || isPending || !message.trim();
+  const isSubmitDisabled = isClosed || isPending || !isOnline || !message.trim();
 
   if (isClosed) {
     return (
@@ -251,13 +253,17 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
         </p>
       ) : null}
 
+      {!isOnline ? (
+        <OnlineOnlyNotice>{tPwa('sendMessage')}</OnlineOnlyNotice>
+      ) : null}
+
       <input
         ref={fileInputRef}
         hidden
         multiple
         type="file"
         accept={TICKET_ATTACHMENT_ACCEPT}
-        disabled={isPending}
+        disabled={isPending || !isOnline}
         onChange={handleFileChange}
       />
 
@@ -266,7 +272,7 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
           type="button"
           isIconOnly
           variant="outline"
-          isDisabled={isPending}
+          isDisabled={isPending || !isOnline}
           aria-label={t('attachment')}
           onPress={() => fileInputRef.current?.click()}
           className="button button--md button--icon-only shrink-0 rounded-lg"
@@ -286,6 +292,7 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
             rows={1}
             maxLength={4000}
             variant="secondary"
+            disabled={!isOnline}
             placeholder={t('placeholder')}
             className="max-h-32 min-h-11 min-w-0 resize-none rounded-lg"
           />

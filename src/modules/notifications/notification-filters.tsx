@@ -3,6 +3,7 @@
 import { Button } from '@heroui/react';
 import { CheckCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { OnlineOnlyNotice } from '@/components/shared';
 import { ICON_SIZE_CLASS } from '@/constants';
 import { cn } from '@/utils';
 import type { NotificationTab } from '@/models';
@@ -18,6 +19,7 @@ const NOTIFICATION_TABS = [
 interface NotificationFiltersProps {
   activeTab: NotificationTab;
   isPending?: boolean;
+  isOnline?: boolean;
   isMarkAllReadPending?: boolean;
   unreadCount?: number;
   onMarkAllRead: () => void;
@@ -27,12 +29,14 @@ interface NotificationFiltersProps {
 const NotificationFilters = ({
   activeTab,
   isPending = false,
+  isOnline = true,
   isMarkAllReadPending = false,
   unreadCount = 0,
   onMarkAllRead,
   onTabChange,
 }: NotificationFiltersProps) => {
   const t = useTranslations('notifications.filters');
+  const tPwa = useTranslations('pwa.onlineOnly');
   const hasUnreadNotifications = unreadCount > 0;
 
   return (
@@ -69,7 +73,7 @@ const NotificationFilters = ({
           size="md"
           variant="outline"
           className="bg-surface h-10 w-full lg:w-auto"
-          isDisabled={!hasUnreadNotifications || isPending}
+          isDisabled={!hasUnreadNotifications || isPending || !isOnline}
           isPending={isMarkAllReadPending}
           onPress={onMarkAllRead}
         >
@@ -77,6 +81,12 @@ const NotificationFilters = ({
           {t('markAllRead')}
         </Button>
       </div>
+
+      {!isOnline ? (
+        <OnlineOnlyNotice className="mt-3">
+          {tPwa('notifications')}
+        </OnlineOnlyNotice>
+      ) : null}
     </section>
   );
 };

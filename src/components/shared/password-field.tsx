@@ -20,6 +20,7 @@ interface PasswordFieldProps {
   autoComplete?: string;
   showPasswordLabel: string;
   hidePasswordLabel: string;
+  isDisabled?: boolean;
 }
 
 const PasswordField = ({
@@ -30,6 +31,7 @@ const PasswordField = ({
   autoComplete,
   showPasswordLabel,
   hidePasswordLabel,
+  isDisabled = false,
 }: PasswordFieldProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const visibilityLabel = isVisible ? hidePasswordLabel : showPasswordLabel;
@@ -44,6 +46,7 @@ const PasswordField = ({
           {...registration}
           type={isVisible ? 'text' : 'password'}
           autoComplete={autoComplete}
+          disabled={isDisabled}
           placeholder={placeholder}
         />
 
@@ -54,6 +57,7 @@ const PasswordField = ({
             size="sm"
             variant="ghost"
             aria-label={visibilityLabel}
+            isDisabled={isDisabled}
             onPress={() => setIsVisible((current) => !current)}
           >
             <VisibilityIcon aria-hidden="true" className={ICON_SIZE_CLASS.sm} />

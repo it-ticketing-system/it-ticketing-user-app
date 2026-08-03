@@ -14,9 +14,9 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { clientAuthServices } from '@/apis/services/auth/client';
-import { PasswordField } from '@/components/shared';
+import { OnlineOnlyNotice, PasswordField } from '@/components/shared';
 import { ROUTES } from '@/constants';
-import { usePostRequest } from '@/hooks';
+import { usePostRequest, usePwa } from '@/hooks';
 import {
   createRegisterSchema,
   type RegisterFormValues,
@@ -29,6 +29,8 @@ import type {
 const RegisterModule = () => {
   const t = useTranslations('auth.register');
   const tV = useTranslations('auth.validation');
+  const tPwa = useTranslations('pwa.onlineOnly');
+  const { isOnline } = usePwa();
   const router = useRouter();
 
   const schema = useMemo(
@@ -89,6 +91,10 @@ const RegisterModule = () => {
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
+    if (!isOnline) {
+      return;
+    }
+
     const payload: RegisterRequest = {
       name: data.name,
       username: data.username,
@@ -116,6 +122,7 @@ const RegisterModule = () => {
           <Input
             {...registerField('name')}
             autoComplete="name"
+            disabled={!isOnline || isPending}
             placeholder={t('fields.name.placeholder')}
           />
 
@@ -128,6 +135,7 @@ const RegisterModule = () => {
           <Input
             {...registerField('username')}
             autoComplete="username"
+            disabled={!isOnline || isPending}
             placeholder={t('fields.username.placeholder')}
           />
 
@@ -142,6 +150,7 @@ const RegisterModule = () => {
           autoComplete="new-password"
           showPasswordLabel={t('fields.password.show')}
           hidePasswordLabel={t('fields.password.hide')}
+          isDisabled={!isOnline || isPending}
         />
 
         <PasswordField
@@ -152,11 +161,22 @@ const RegisterModule = () => {
           autoComplete="new-password"
           showPasswordLabel={t('fields.confirmPassword.show')}
           hidePasswordLabel={t('fields.confirmPassword.hide')}
+          isDisabled={!isOnline || isPending}
         />
       </div>
 
+      {!isOnline ? (
+        <OnlineOnlyNotice>{tPwa('register')}</OnlineOnlyNotice>
+      ) : null}
+
       <div className="flex w-full flex-col gap-3">
-        <Button fullWidth size="md" type="submit" isPending={isPending}>
+        <Button
+          fullWidth
+          size="md"
+          type="submit"
+          isPending={isPending}
+          isDisabled={!isOnline}
+        >
           {t('actions.submit')}
         </Button>
 
