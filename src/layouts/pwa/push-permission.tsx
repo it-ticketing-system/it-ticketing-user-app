@@ -15,6 +15,7 @@ const PushPermission = () => {
     isBrowserSubscribed,
     isCheckingSubscription,
     isPending,
+    isServiceWorkerReady,
     isSupported,
     permission,
     subscribe,
@@ -25,7 +26,7 @@ const PushPermission = () => {
     return null;
   }
 
-  if (!isSupported) {
+  if (!isSupported || !isServiceWorkerReady) {
     return null;
   }
 
@@ -75,7 +76,7 @@ const PushPermission = () => {
           isDisabled={!isOnline}
           isPending={isPending}
           onPress={() => {
-            void unsubscribe();
+            void unsubscribe().catch(() => undefined);
           }}
         >
           <BellOff aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
@@ -90,7 +91,7 @@ const PushPermission = () => {
           isDisabled={!canRequestPermission}
           isPending={isPending}
           onPress={() => {
-            void subscribe();
+            void subscribe().catch(() => undefined);
           }}
         >
           <BellRing aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
