@@ -1,0 +1,2855 @@
+# API Design — IT Ticketing System
+
+## 1. General API Conventions
+
+Base URL:
+
+```text
+/api/v1
+```
+
+Authentication:
+Session rule:
+Each successful login creates an AuthSession record.
+The generated JWT must include a session identifier.
+For every protected request, the backend validates both the JWT and its related active session.
+If the session is revoked, expired, or not found, the request must be rejected with 401 Unauthorized.
+Logout revokes the current session.
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Date format:
+
+```text
+ISO 8601
+Example: 2026-06-29T10:30:00Z
+```
+
+Pagination query:
+
+```text
+?page=1&perPage=10
+```
+
+Standard success response:
+
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+Standard paginated response:
+
+```json
+{
+  "success": true,
+  "data": [],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 120,
+    "totalPages": 12
+  }
+}
+```
+
+Standard error response:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "fields": {
+      "username": ["Username is required"]
+    }
+  }
+}
+```
+
+Common status codes:
+
+```text
+200 OK
+201 Created
+400 Bad Request
+401 Unauthorized
+403 Forbidden
+404 Not Found
+409 Conflict
+422 Validation Error
+500 Internal Server Error
+```
+
+---
+
+# 2. Enums
+
+## User Roles
+
+```text
+USER
+SUPPORT
+ADMIN
+```
+
+## Support Permissions
+
+```text
+VIEW_TICKET
+REPLY_TICKET
+CHANGE_TICKET_STATUS
+CHANGE_TICKET_DEPARTMENT
+CHANGE_TICKET_ASSIGNMENT
+```
+
+## Support Availability Status
+
+```text
+AVAILABLE
+ON_LEAVE
+INACTIVE
+```
+
+## Ticket Status
+
+```text
+OPEN
+IN_PROGRESS
+WAITING_FOR_USER
+RESOLVED
+CLOSED
+```
+
+## Notification Types
+
+```text
+NEW_TICKET_CREATED
+TICKET_ASSIGNED
+TICKET_REASSIGNED
+TICKET_DEPARTMENT_CHANGED
+NEW_MESSAGE
+TICKET_STATUS_CHANGED
+SYSTEM_NOTIFICATION
+```
+
+Important rule:
+
+```text
+ASSIGNMENT_REMOVED is not used because assignment removal is out of scope.
+The system only supports changing assignment, so TICKET_REASSIGNED must be used.
+```
+
+---
+
+# 3. Access Rules Used by APIs
+
+## Support Read Scope
+
+A Support can read a ticket if:
+
+```text
+ticket.assignedTo.id == currentSupport.id
+OR
+support has VIEW_TICKET permission AND ticket.department.id is in support.departments
+```
+
+## Support Action Scope
+
+A Support can perform actions only if:
+
+```text
+ticket.assignedTo.id == currentSupport.id
+AND support has the related operation permission
+```
+
+Examples:
+
+```text
+Reply requires:
+assigned_to_me + REPLY_TICKET
+
+Change status requires:
+assigned_to_me + CHANGE_TICKET_STATUS
+
+Change department requires:
+assigned_to_me + CHANGE_TICKET_DEPARTMENT
+
+Change assignment requires:
+assigned_to_me + CHANGE_TICKET_ASSIGNMENT
+```
+
+Important:
+
+```text
+VIEW_TICKET never allows reply, status change, department change, or assignment change.
+```
+
+## Support Overview Scope
+
+```text
+Support overview is calculated only from tickets assigned to that Support.
+VIEW_TICKET has no effect on overview statistics.
+```
+
+---
+
+# 4. Authentication APIs
+
+## 4.1 Register User
+
+```http
+POST /auth/register
+```
+
+Role:
+
+```text
+Public
+```
+
+Request body:
+
+```json
+{
+  "name": "Ali Mohammadi",
+  "username": "ali_mohammadi",
+  "password": "12345678"
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 15,
+    "name": "Ali Mohammadi",
+    "username": "ali_mohammadi",
+    "role": "USER",
+    "profileImageUrl": null,
+    "createdAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "USERNAME_ALREADY_EXISTS",
+    "message": "Username already exists"
+  }
+}
+```
+
+---
+
+## 4.2 Login
+
+```http
+POST /auth/login
+```
+
+Role:
+
+```text
+Public
+```
+
+This endpoint is shared between User Application and Management Panel.
+
+Request body:
+
+```json
+{
+  "username": "hossein_support",
+  "password": "12345678"
+}
+```
+
+Response for User:
+
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken": "jwt_access_token",
+    "tokenType": "Bearer",
+    "user": {
+      "id": 10,
+      "name": "Ali Mohammadi",
+      "username": "ali_mohammadi",
+      "role": "USER",
+      "profileImageUrl": null
+    }
+  }
+}
+```
+
+Response for Support:
+
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken": "jwt_access_token",
+    "tokenType": "Bearer",
+    "user": {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "username": "hossein_support",
+      "role": "SUPPORT",
+      "profileImageUrl": null,
+      "permissions": [
+        "VIEW_TICKET",
+        "REPLY_TICKET",
+        "CHANGE_TICKET_STATUS"
+      ],
+      "departments": [
+        {
+          "id": 1,
+          "name": "Technical"
+        }
+      ],
+      "availabilityStatus": "AVAILABLE"
+    }
+  }
+}
+```
+
+Response for Admin:
+
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken": "jwt_access_token",
+    "tokenType": "Bearer",
+    "user": {
+      "id": 1,
+      "name": "System Admin",
+      "username": "admin",
+      "role": "ADMIN",
+      "profileImageUrl": null,
+      "permissions": ["*"]
+    }
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Username or password is incorrect"
+  }
+}
+```
+
+---
+
+## 4.3 Logout
+
+```http
+POST /auth/logout
+```
+Note:
+Logout does not change the response body.
+Internally, the backend revokes the current AuthSession related to the provided Bearer token.
+After logout, the same access token must no longer be accepted.
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Request body:
+
+```json
+{}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Logged out successfully"
+  }
+}
+```
+
+---
+
+## 4.4 Change Password
+
+```http
+PATCH /auth/change-password
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Request body:
+
+```json
+{
+  "currentPassword": "old_password",
+  "newPassword": "new_password",
+  "newPasswordConfirmation": "new_password"
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Password changed successfully"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "CURRENT_PASSWORD_INCORRECT",
+    "message": "Current password is incorrect"
+  }
+}
+```
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "PASSWORD_CONFIRMATION_MISMATCH",
+    "message": "New password and confirmation do not match"
+  }
+}
+```
+
+---
+
+## 4.5 Auth Me / Profile
+
+```http
+GET /auth/me
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Response for User:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 10,
+    "name": "Ali Mohammadi",
+    "username": "ali_mohammadi",
+    "role": "USER",
+    "profileImageUrl": null,
+    "createdAt": "2026-06-01T09:00:00Z",
+    "lastLoginAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+Response for Support:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 21,
+    "name": "Hossein Ahmadi",
+    "username": "hossein_support",
+    "role": "SUPPORT",
+    "profileImageUrl": null,
+    "permissions": [
+      "VIEW_TICKET",
+      "REPLY_TICKET",
+      "CHANGE_TICKET_STATUS"
+    ],
+    "departments": [
+      {
+        "id": 1,
+        "name": "Technical"
+      },
+      {
+        "id": 2,
+        "name": "Financial"
+      }
+    ],
+    "availabilityStatus": "AVAILABLE",
+    "createdAt": "2026-05-10T09:00:00Z",
+    "lastLoginAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+Response for Admin:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "System Admin",
+    "username": "admin",
+    "role": "ADMIN",
+    "profileImageUrl": null,
+    "permissions": ["*"],
+    "createdAt": "2026-01-01T09:00:00Z",
+    "lastLoginAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+---
+
+## 4.6 Update Auth Me / Profile
+
+```http
+PATCH /auth/me
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+This endpoint updates only the authenticated user's own profile.
+To update the profile image, the client must upload the image first with `POST /files`, then send the returned file `id` as `profileImageFileId`.
+
+Request body:
+
+```json
+{
+  "name": "Ali Reza Mohammadi",
+  "username": "ali_reza",
+  "profileImageFileId": 501
+}
+```
+
+All request fields are optional, but at least one field must be provided.
+
+Rules:
+
+```text
+name and username update the authenticated user's own user record.
+profileImageFileId must belong to the authenticated user.
+profileImageFileId must reference a PNG or JPG file uploaded through POST /files.
+profileImageUrl is stored as /files/{fileId}/download.
+Changing profile fields does not invalidate active AuthSessions.
+Changing profile fields does not change role, permissions, departments, availabilityStatus, password, or JWT payload structure.
+```
+
+Response for User:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 10,
+    "name": "Ali Reza Mohammadi",
+    "username": "ali_reza",
+    "role": "USER",
+    "profileImageUrl": "/files/501/download",
+    "createdAt": "2026-06-01T09:00:00Z",
+    "lastLoginAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+Response for Support:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 21,
+    "name": "Hossein Ahmadi",
+    "username": "hossein_support",
+    "role": "SUPPORT",
+    "profileImageUrl": "/files/501/download",
+    "permissions": [
+      "VIEW_TICKET",
+      "REPLY_TICKET",
+      "CHANGE_TICKET_STATUS"
+    ],
+    "departments": [
+      {
+        "id": 1,
+        "name": "Technical"
+      }
+    ],
+    "availabilityStatus": "AVAILABLE",
+    "createdAt": "2026-05-10T09:00:00Z",
+    "lastLoginAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+Response for Admin:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "System Admin",
+    "username": "admin",
+    "role": "ADMIN",
+    "profileImageUrl": "/files/501/download",
+    "permissions": ["*"],
+    "createdAt": "2026-01-01T09:00:00Z",
+    "lastLoginAt": "2026-06-29T10:00:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "USERNAME_ALREADY_EXISTS",
+    "message": "Username already exists"
+  }
+}
+```
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "FILE_NOT_FOUND",
+    "message": "File not found"
+  }
+}
+```
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILE_OWNERSHIP",
+    "message": "You can use only files uploaded by the current user"
+  }
+}
+```
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_PROFILE_IMAGE_TYPE",
+    "message": "Only PNG and JPG files can be used as profile image"
+  }
+}
+```
+
+---
+
+# 5. File APIs
+
+## 5.1 Upload File
+
+```http
+POST /files
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Content-Type:
+
+```text
+multipart/form-data
+```
+
+Request body:
+
+```text
+file: binary
+```
+
+Note:
+
+```text
+For profile image update, upload the PNG or JPG file here first.
+Then send the returned file id as profileImageFileId to PATCH /auth/me.
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 501,
+    "originalName": "error-screenshot.png",
+    "mimeType": "image/png",
+    "size": 245000,
+    "url": "/files/501/download",
+    "createdAt": "2026-06-29T10:30:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILE_TYPE",
+    "message": "Only PDF, PNG, JPG, and DOCX files are allowed"
+  }
+}
+```
+
+---
+
+# 6. User Application Ticket APIs
+
+## 6.1 Get My Tickets
+
+```http
+GET /user/tickets
+```
+
+Role:
+
+```text
+USER
+```
+
+Query params:
+
+```text
+page
+perPage
+status
+search
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 101,
+      "ticketNumber": "TK-1024",
+      "title": "Problem logging into system",
+      "department": {
+        "id": 1,
+        "name": "Technical"
+      },
+      "status": "OPEN",
+      "lastUpdatedAt": "2026-06-29T10:40:00Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+Note:
+
+```text
+The operations icon in the UI does not require a separate data field.
+```
+
+---
+
+## 6.2 Create Ticket
+
+```http
+POST /user/tickets
+```
+
+Role:
+
+```text
+USER
+```
+
+Request body:
+
+```json
+{
+  "title": "Problem logging into system",
+  "departmentId": 1,
+  "initialMessage": "I cannot log into the system after changing my password.",
+  "fileIds": [501, 502]
+}
+```
+
+Important entity rule:
+
+```text
+title and departmentId are properties of Ticket.
+initialMessage and fileIds are properties of the first TicketMessage.
+Files must be uploaded first using /files, then their IDs are sent here.
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "ticket": {
+      "id": 101,
+      "ticketNumber": "TK-1024",
+      "title": "Problem logging into system",
+      "department": {
+        "id": 1,
+        "name": "Technical"
+      },
+      "status": "OPEN",
+      "assignedSupport": {
+        "id": 21,
+        "name": "Hossein Ahmadi"
+      },
+      "createdAt": "2026-06-29T10:45:00Z",
+      "updatedAt": "2026-06-29T10:45:00Z"
+    },
+    "initialMessage": {
+      "id": 9001,
+      "body": "I cannot log into the system after changing my password.",
+      "sender": {
+        "id": 10,
+        "name": "Ali Mohammadi",
+        "role": "USER",
+        "profileImageUrl": null
+      },
+      "files": [
+        {
+          "id": 501,
+          "originalName": "error-screenshot.png",
+          "url": "/files/501/download"
+        }
+      ],
+      "createdAt": "2026-06-29T10:45:00Z"
+    }
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "DEPARTMENT_NOT_FOUND",
+    "message": "Department not found"
+  }
+}
+```
+
+---
+
+## 6.3 Get My Ticket Details
+
+```http
+GET /user/tickets/{ticketId}
+```
+
+Role:
+
+```text
+USER
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 101,
+    "ticketNumber": "TK-1024",
+    "title": "Problem logging into system",
+    "department": {
+      "id": 1,
+      "name": "Technical"
+    },
+    "status": "OPEN",
+    "assignedSupport": {
+      "id": 21,
+      "name": "Hossein Ahmadi"
+    },
+    "createdAt": "2026-06-29T10:45:00Z",
+    "updatedAt": "2026-06-29T10:45:00Z",
+    "messages": [
+      {
+        "id": 9001,
+        "body": "I cannot log into the system after changing my password.",
+        "sender": {
+          "id": 10,
+          "name": "Ali Mohammadi",
+          "username": "ali_mohammadi",
+          "role": "USER",
+          "profileImageUrl": null
+        },
+        "files": [
+          {
+            "id": 501,
+            "originalName": "error-screenshot.png",
+            "mimeType": "image/png",
+            "size": 245000,
+            "url": "/files/501/download"
+          }
+        ],
+        "createdAt": "2026-06-29T10:45:00Z"
+      }
+    ]
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TICKET_NOT_FOUND",
+    "message": "Ticket not found"
+  }
+}
+```
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "You do not have access to this ticket"
+  }
+}
+```
+
+---
+
+## 6.4 Send Message in My Ticket
+
+```http
+POST /user/tickets/{ticketId}/messages
+```
+
+Role:
+
+```text
+USER
+```
+
+Request body:
+
+```json
+{
+  "body": "I still have the same problem.",
+  "fileIds": [503]
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 9002,
+    "body": "I still have the same problem.",
+    "sender": {
+      "id": 10,
+      "name": "Ali Mohammadi",
+      "role": "USER",
+      "profileImageUrl": null
+    },
+    "files": [
+      {
+        "id": 503,
+        "originalName": "new-error.png",
+        "url": "/files/503/download"
+      }
+    ],
+    "createdAt": "2026-06-29T11:00:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TICKET_CLOSED",
+    "message": "Cannot send message to a closed ticket"
+  }
+}
+```
+
+---
+
+# 7. Notification APIs
+
+## 7.1 Get Notifications
+
+```http
+GET /notifications
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Query params:
+
+```text
+tab=all|unread|messages|assignments|system
+page=1
+perPage=10
+```
+
+Tab mapping:
+
+```text
+all:
+NEW_TICKET_CREATED
+TICKET_ASSIGNED
+TICKET_REASSIGNED
+TICKET_DEPARTMENT_CHANGED
+NEW_MESSAGE
+TICKET_STATUS_CHANGED
+SYSTEM_NOTIFICATION
+
+unread:
+isRead = false
+
+messages:
+NEW_MESSAGE
+
+assignments:
+TICKET_ASSIGNED
+TICKET_REASSIGNED
+TICKET_DEPARTMENT_CHANGED
+
+system:
+NEW_TICKET_CREATED
+TICKET_STATUS_CHANGED
+SYSTEM_NOTIFICATION
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 3001,
+      "type": "NEW_MESSAGE",
+      "title": "New message received",
+      "body": "Hossein Ahmadi replied to your ticket TK-1024.",
+      "isRead": false,
+      "relatedEntity": {
+        "type": "TICKET",
+        "id": 101,
+        "ticketNumber": "TK-1024",
+        "url": "/tickets/101"
+      },
+      "createdAt": "2026-06-29T11:10:00Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+## 7.2 Mark One Notification As Read
+
+```http
+PATCH /notifications/{notificationId}/read
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Request body:
+
+```json
+{}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 3001,
+    "isRead": true,
+    "readAt": "2026-06-29T11:15:00Z"
+  }
+}
+```
+
+---
+
+## 7.3 Mark All Notifications As Read
+
+```http
+PATCH /notifications/read-all
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Request body:
+
+```json
+{}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "updatedCount": 12,
+    "message": "All notifications marked as read"
+  }
+}
+```
+
+---
+
+# 8. Management Panel Overview APIs
+
+## 8.1 Get Overview
+
+```http
+GET /management/overview
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Query params:
+
+```text
+range=today|week|month|year
+```
+
+Access rule:
+
+```text
+Admin: all tickets
+Support: only tickets assigned to that Support
+VIEW_TICKET has no effect on overview
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "cards": {
+      "totalTickets": 120,
+      "openTickets": 30,
+      "inProgressTickets": 45,
+      "closedTickets": 20
+    },
+    "trend": {
+      "range": "week",
+      "points": [
+        {
+          "label": "Saturday",
+          "date": "2026-06-23",
+          "count": 10
+        },
+        {
+          "label": "Sunday",
+          "date": "2026-06-24",
+          "count": 15
+        }
+      ]
+    }
+  }
+}
+```
+
+---
+
+# 9. Management Panel Ticket APIs
+
+## 9.1 Get Tickets
+
+```http
+GET /management/tickets
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Query params:
+
+```text
+search
+departmentId
+status
+supportId
+userId
+createdFrom
+createdTo
+updatedFrom
+updatedTo
+page
+perPage
+```
+
+Access rule:
+
+```text
+Admin sees all tickets.
+Support sees:
+- tickets assigned to himself
+- department tickets only if he has VIEW_TICKET
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 101,
+      "ticketNumber": "TK-1024",
+      "title": "Problem logging into system",
+      "user": {
+        "id": 10,
+        "name": "Ali Mohammadi",
+        "username": "ali_mohammadi"
+      },
+      "assignedSupport": {
+        "id": 21,
+        "name": "Hossein Ahmadi"
+      },
+      "department": {
+        "id": 1,
+        "name": "Technical"
+      },
+      "status": "OPEN",
+      "createdAt": "2026-06-29T10:45:00Z",
+      "updatedAt": "2026-06-29T10:45:00Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+## 9.2 Get Ticket Details
+
+```http
+GET /management/tickets/{ticketId}
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Access rule:
+
+```text
+Admin can view all tickets.
+Support can view assigned tickets.
+Support can view department tickets only with VIEW_TICKET.
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 101,
+    "ticketNumber": "TK-1024",
+    "title": "Problem logging into system",
+    "user": {
+      "id": 10,
+      "name": "Ali Mohammadi",
+      "username": "ali_mohammadi",
+      "profileImageUrl": null
+    },
+    "department": {
+      "id": 1,
+      "name": "Technical"
+    },
+    "assignedSupport": {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "username": "hossein_support",
+      "profileImageUrl": null
+    },
+    "status": "OPEN",
+    "createdAt": "2026-06-29T10:45:00Z",
+    "updatedAt": "2026-06-29T10:45:00Z",
+    "availableActions": {
+      "canReply": true,
+      "canChangeStatus": true,
+      "canChangeDepartment": false,
+      "canChangeAssignment": false
+    },
+    "messages": [
+      {
+        "id": 9001,
+        "body": "I cannot log into the system after changing my password.",
+        "sender": {
+          "id": 10,
+          "name": "Ali Mohammadi",
+          "username": "ali_mohammadi",
+          "role": "USER",
+          "profileImageUrl": null
+        },
+        "files": [
+          {
+            "id": 501,
+            "originalName": "error-screenshot.png",
+            "mimeType": "image/png",
+            "size": 245000,
+            "url": "/files/501/download"
+          }
+        ],
+        "createdAt": "2026-06-29T10:45:00Z"
+      }
+    ]
+  }
+}
+```
+
+Important UI rule:
+
+```text
+availableActions is useful because a Support may have a permission globally,
+but still cannot perform the action if the ticket is not assigned to him.
+```
+
+---
+
+## 9.3 Reply To Ticket
+
+```http
+POST /management/tickets/{ticketId}/messages
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Support rule:
+
+```text
+Support must have REPLY_TICKET.
+Ticket must be assigned to that Support.
+VIEW_TICKET is not enough.
+Ticket must not be CLOSED.
+```
+
+Request body:
+
+```json
+{
+  "body": "Please try resetting your browser cache and login again.",
+  "fileIds": [504]
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 9003,
+    "body": "Please try resetting your browser cache and login again.",
+    "sender": {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "role": "SUPPORT",
+      "profileImageUrl": null
+    },
+    "files": [
+      {
+        "id": 504,
+        "originalName": "guide.pdf",
+        "url": "/files/504/download"
+      }
+    ],
+    "createdAt": "2026-06-29T11:20:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ACTION_NOT_ALLOWED",
+    "message": "You can reply only to tickets assigned to you"
+  }
+}
+```
+
+---
+
+## 9.4 Change Ticket Status
+
+```http
+PATCH /management/tickets/{ticketId}/status
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Support rule:
+
+```text
+Support must have CHANGE_TICKET_STATUS.
+Ticket must be assigned to that Support.
+VIEW_TICKET is not enough.
+```
+
+Request body:
+
+```json
+{
+  "status": "IN_PROGRESS"
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 101,
+    "ticketNumber": "TK-1024",
+    "oldStatus": "OPEN",
+    "newStatus": "IN_PROGRESS",
+    "changedBy": {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "role": "SUPPORT"
+    },
+    "changedAt": "2026-06-29T11:25:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_STATUS_TRANSITION",
+    "message": "This status transition is not allowed"
+  }
+}
+```
+
+---
+
+## 9.5 Change Ticket Assignment
+
+```http
+PATCH /management/tickets/{ticketId}/assignment
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Support rule:
+
+```text
+Support must have CHANGE_TICKET_ASSIGNMENT.
+Ticket must be assigned to that Support.
+VIEW_TICKET is not enough.
+```
+
+Request body:
+
+```json
+{
+  "supportId": 25
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 101,
+    "ticketNumber": "TK-1024",
+    "oldSupport": {
+      "id": 21,
+      "name": "Hossein Ahmadi"
+    },
+    "newSupport": {
+      "id": 25,
+      "name": "Sara Akbari"
+    },
+    "assignmentType": "ASSIGN_SUPPORT",
+    "changedBy": {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "role": "SUPPORT"
+    },
+    "changedAt": "2026-06-29T11:30:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "SUPPORT_NOT_IN_DEPARTMENT",
+    "message": "Selected support is not a member of the ticket department"
+  }
+}
+```
+
+---
+
+## 9.6 Change Ticket Department
+
+```http
+PATCH /management/tickets/{ticketId}/department
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT
+```
+
+Support rule:
+
+```text
+Support must have CHANGE_TICKET_DEPARTMENT.
+Ticket must be assigned to that Support.
+VIEW_TICKET is not enough.
+```
+
+Request body:
+
+```json
+{
+  "departmentId": 2
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 101,
+    "ticketNumber": "TK-1024",
+    "oldDepartment": {
+      "id": 1,
+      "name": "Technical"
+    },
+    "newDepartment": {
+      "id": 2,
+      "name": "Financial"
+    },
+    "oldSupport": {
+      "id": 21,
+      "name": "Hossein Ahmadi"
+    },
+    "newSupport": {
+      "id": 30,
+      "name": "Mina Rezaei"
+    },
+    "changedBy": {
+      "id": 1,
+      "name": "System Admin",
+      "role": "ADMIN"
+    },
+    "changedAt": "2026-06-29T11:35:00Z"
+  }
+}
+```
+
+Note:
+
+```text
+After department change, the system must re-check automatic assignment.
+If assigned support changes, assignment history must also be created.
+```
+
+---
+
+# 10. Ticket History APIs
+
+## 10.1 Get Assignment History
+
+```http
+GET /management/tickets/{ticketId}/assignment-history
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT with readable access to ticket
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 7001,
+      "fromSupport": {
+        "id": 21,
+        "name": "Hossein Ahmadi"
+      },
+      "toSupport": {
+        "id": 25,
+        "name": "Sara Akbari"
+      },
+      "assignmentType": "ASSIGN_SUPPORT",
+      "changedBy": {
+        "id": 1,
+        "name": "System Admin",
+        "role": "ADMIN"
+      },
+      "createdAt": "2026-06-29T11:30:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## 10.2 Get Status History
+
+```http
+GET /management/tickets/{ticketId}/status-history
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT with readable access to ticket
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 7101,
+      "oldStatus": "OPEN",
+      "newStatus": "IN_PROGRESS",
+      "changedBy": {
+        "id": 21,
+        "name": "Hossein Ahmadi",
+        "role": "SUPPORT"
+      },
+      "createdAt": "2026-06-29T11:25:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## 10.3 Get Department Change History
+
+```http
+GET /management/tickets/{ticketId}/department-history
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT with readable access to ticket
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 7201,
+      "oldDepartment": {
+        "id": 1,
+        "name": "Technical"
+      },
+      "newDepartment": {
+        "id": 2,
+        "name": "Financial"
+      },
+      "changedBy": {
+        "id": 1,
+        "name": "System Admin",
+        "role": "ADMIN"
+      },
+      "createdAt": "2026-06-29T11:35:00Z"
+    }
+  ]
+}
+```
+
+---
+
+# 11. Admin User Management APIs
+
+## 11.1 Get Users
+
+```http
+GET /management/users
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Query params:
+
+```text
+search
+page
+perPage
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 10,
+      "name": "Ali Mohammadi",
+      "username": "ali_mohammadi",
+      "ticketCount": 8,
+      "createdAt": "2026-06-01T09:00:00Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+# 12. Admin Support Management APIs
+
+## 12.1 Get Supports
+
+```http
+GET /management/supports
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Query params:
+
+```text
+search
+departmentId
+availabilityStatus
+page
+perPage
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "username": "hossein_support",
+      "departments": [
+        {
+          "id": 1,
+          "name": "Technical"
+        }
+      ],
+      "availabilityStatus": "AVAILABLE",
+      "activeTicketCount": 12,
+      "lastActivityAt": "2026-06-29T11:00:00Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+## 12.2 Create Support
+
+```http
+POST /management/supports
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Request body:
+
+```json
+{
+  "name": "Sara Akbari",
+  "username": "sara_support",
+  "password": "12345678",
+  "departmentIds": [1, 2],
+  "availabilityStatus": "AVAILABLE",
+  "permissions": [
+    "VIEW_TICKET",
+    "REPLY_TICKET",
+    "CHANGE_TICKET_STATUS"
+  ]
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 25,
+    "name": "Sara Akbari",
+    "username": "sara_support",
+    "role": "SUPPORT",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Technical"
+      },
+      {
+        "id": 2,
+        "name": "Financial"
+      }
+    ],
+    "availabilityStatus": "AVAILABLE",
+    "permissions": [
+      "VIEW_TICKET",
+      "REPLY_TICKET",
+      "CHANGE_TICKET_STATUS"
+    ],
+    "createdAt": "2026-06-29T12:00:00Z"
+  }
+}
+```
+
+---
+
+## 12.3 Update Support
+
+```http
+PATCH /management/supports/{supportId}
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Request body:
+
+```json
+{
+  "name": "Sara Akbari",
+  "username": "sara_support",
+  "password": "new_password_optional",
+  "departmentIds": [1, 2],
+  "availabilityStatus": "ON_LEAVE",
+  "permissions": [
+    "VIEW_TICKET",
+    "REPLY_TICKET"
+  ]
+}
+```
+
+Important rule:
+
+```text
+password is optional.
+If Admin sends password and changes the Support password,
+all active tokens and sessions of that Support must be invalidated.
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 25,
+    "name": "Sara Akbari",
+    "username": "sara_support",
+    "role": "SUPPORT",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Technical"
+      },
+      {
+        "id": 2,
+        "name": "Financial"
+      }
+    ],
+    "availabilityStatus": "ON_LEAVE",
+    "permissions": [
+      "VIEW_TICKET",
+      "REPLY_TICKET"
+    ],
+    "passwordChanged": true,
+    "sessionsInvalidated": true,
+    "updatedAt": "2026-06-29T12:30:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "USERNAME_ALREADY_EXISTS",
+    "message": "Username already exists"
+  }
+}
+```
+
+---
+
+# 13. Admin Department Management APIs
+
+## 13.1 Get Departments
+
+```http
+GET /management/departments
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Query params:
+
+```text
+search
+page
+perPage
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Technical",
+      "supportCount": 5,
+      "ticketCount": 42
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "perPage": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+## 13.2 Create Department
+
+```http
+POST /management/departments
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Request body:
+
+```json
+{
+  "name": "Technical",
+  "supportIds": [21, 25]
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Technical",
+    "supports": [
+      {
+        "id": 21,
+        "name": "Hossein Ahmadi"
+      },
+      {
+        "id": 25,
+        "name": "Sara Akbari"
+      }
+    ],
+    "createdAt": "2026-06-29T12:45:00Z"
+  }
+}
+```
+
+Possible errors:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "DEPARTMENT_NAME_ALREADY_EXISTS",
+    "message": "Department name already exists"
+  }
+}
+```
+
+---
+
+## 13.3 Update Department
+
+```http
+PATCH /management/departments/{departmentId}
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Request body:
+
+```json
+{
+  "name": "Technical Support",
+  "supportIds": [21, 25, 30]
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Technical Support",
+    "supports": [
+      {
+        "id": 21,
+        "name": "Hossein Ahmadi"
+      },
+      {
+        "id": 25,
+        "name": "Sara Akbari"
+      },
+      {
+        "id": 30,
+        "name": "Mina Rezaei"
+      }
+    ],
+    "updatedAt": "2026-06-29T13:00:00Z"
+  }
+}
+```
+
+---
+
+# 14. Report APIs
+
+## 14.1 Get Reports Dashboard
+
+```http
+GET /management/reports/dashboard
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Query params:
+
+```text
+range=today|week|month|year
+departmentId
+supportId
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "cards": {
+      "totalTickets": 120,
+      "openTickets": 30,
+      "inProgressTickets": 45,
+      "closedTickets": 20
+    },
+    "ticketTrend": {
+      "range": "month",
+      "points": [
+        {
+          "label": "Week 1",
+          "count": 25
+        },
+        {
+          "label": "Week 2",
+          "count": 30
+        }
+      ]
+    },
+    "departmentStatistics": [
+      {
+        "department": {
+          "id": 1,
+          "name": "Technical"
+        },
+        "ticketCount": 42,
+        "openTickets": 10,
+        "closedTickets": 12
+      }
+    ],
+    "supportPerformance": [
+      {
+        "support": {
+          "id": 21,
+          "name": "Hossein Ahmadi"
+        },
+        "assignedTickets": 20,
+        "closedTickets": 8,
+        "averageResponseTimeMinutes": 45
+      }
+    ]
+  }
+}
+```
+
+---
+
+## 14.2 Export Report
+
+```http
+POST /management/reports/export
+```
+
+Role:
+
+```text
+ADMIN
+```
+
+Request body:
+
+```json
+{
+  "reportType": "SUPPORT_PERFORMANCE",
+  "dateFrom": "2026-06-01",
+  "dateTo": "2026-06-30",
+  "departmentId": 1,
+  "supportId": 21
+}
+```
+
+Report type values:
+
+```text
+GENERAL_TICKETS
+SUPPORT_PERFORMANCE
+DEPARTMENT_STATISTICS
+RESPONSE_TIME
+```
+
+Optional filters:
+
+```text
+departmentId is optional.
+supportId is optional.
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "fileName": "support-performance-2026-06.xlsx",
+    "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "downloadUrl": "/management/reports/downloads/report-abc123.xlsx",
+    "createdAt": "2026-06-29T13:30:00Z"
+  }
+}
+```
+
+---
+
+# 15. Lookup APIs
+
+These APIs are useful for dropdowns.
+
+## 15.1 Get Departments Lookup
+
+```http
+GET /lookups/departments
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Technical"
+    },
+    {
+      "id": 2,
+      "name": "Financial"
+    }
+  ]
+}
+```
+
+---
+
+## 15.2 Get Supports Lookup
+
+```http
+GET /lookups/supports
+```
+
+Role:
+
+```text
+ADMIN / SUPPORT depending on use case
+```
+
+Query params:
+
+```text
+departmentId
+availabilityStatus
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 21,
+      "name": "Hossein Ahmadi",
+      "username": "hossein_support",
+      "availabilityStatus": "AVAILABLE",
+      "departments": [
+        {
+          "id": 1,
+          "name": "Technical"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+# 16. JWT Validation Rule
+
+Every protected endpoint must validate:
+
+```text
+1. Token exists
+2. Token signature is valid
+3. Token is not expired
+4. User exists and is active
+5. token.iat must be after user.password_changed_at
+```
+
+If Admin changes Support password:
+
+```text
+user.password_changed_at is updated.
+Any old token issued before password_changed_at becomes invalid.
+Support must be forced to login again.
+```
+
+Unauthorized response:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TOKEN_INVALIDATED",
+    "message": "Your session has expired. Please login again."
+  }
+}
+```
+
+---
+
+# 17. Web Push Notification APIs
+
+Web Push adds an optional browser delivery channel for existing internal Notifications. It does not replace the `notifications` table and does not change notification read state. The internal Notification remains the source of truth and is still retrieved through `GET /notifications`.
+
+Implementation policy:
+
+- VAPID is used for Web Push authentication.
+- `WEB_PUSH_ENABLED=false` returns disabled public config.
+- If `WEB_PUSH_ENABLED=true`, VAPID public key, private key, and subject must be configured at startup.
+- Only the VAPID public key is returned by API.
+- VAPID private key is never returned, logged, or stored in the database.
+- There is no queue in this repository; delivery is best effort and failures do not fail ticket operations.
+- Full push endpoints and subscription keys are not returned from list APIs.
+
+Environment:
+
+```text
+WEB_PUSH_ENABLED=false
+WEB_PUSH_VAPID_PUBLIC_KEY=
+WEB_PUSH_VAPID_PRIVATE_KEY=
+WEB_PUSH_VAPID_SUBJECT=mailto:admin@example.com
+```
+
+## 17.1 Get Web Push Config
+
+```http
+GET /push/config
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "enabled": true,
+    "vapidPublicKey": "PUBLIC_VAPID_KEY"
+  }
+}
+```
+
+When Push is disabled:
+
+```json
+{
+  "success": true,
+  "data": {
+    "enabled": false,
+    "vapidPublicKey": null
+  }
+}
+```
+
+## 17.2 Create Or Update Current User Push Subscription
+
+```http
+POST /push/subscriptions
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Request:
+
+```json
+{
+  "endpoint": "https://push-service.example/subscription-id",
+  "expirationTime": null,
+  "keys": {
+    "p256dh": "BASE64URL_P256DH_KEY",
+    "auth": "BASE64URL_AUTH_SECRET"
+  },
+  "device": {
+    "name": "Chrome on Windows",
+    "platform": "Windows",
+    "userAgent": "optional user agent value"
+  }
+}
+```
+
+Rules:
+
+- `device` is optional.
+- `endpoint` must be an HTTPS URL.
+- Re-sending the same endpoint for the same user updates keys and metadata and reactivates the subscription.
+- If the endpoint belongs to another user, the backend returns `409 PUSH_SUBSCRIPTION_CONFLICT`.
+- The endpoint is not transferred between users to avoid unsafe shared-browser behavior.
+
+Create response status: `201 Created`.
+
+Update response status: `200 OK`.
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1001,
+    "endpointFingerprint": "sha256-short-fingerprint",
+    "device": {
+      "name": "Chrome on Windows",
+      "platform": "Windows"
+    },
+    "isActive": true,
+    "lastUsedAt": "2026-08-03T10:15:00.000Z",
+    "createdAt": "2026-08-03T10:00:00.000Z",
+    "updatedAt": "2026-08-03T10:15:00.000Z"
+  }
+}
+```
+
+## 17.3 List Current User Push Subscriptions
+
+```http
+GET /push/subscriptions
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1001,
+      "endpointFingerprint": "sha256-short-fingerprint",
+      "device": {
+        "name": "Chrome on Windows",
+        "platform": "Windows"
+      },
+      "isActive": true,
+      "lastUsedAt": "2026-08-03T10:15:00.000Z",
+      "createdAt": "2026-08-03T10:00:00.000Z",
+      "updatedAt": "2026-08-03T10:15:00.000Z"
+    }
+  ]
+}
+```
+
+The full endpoint is intentionally not returned because it is capability-like operational data.
+
+## 17.4 Remove Push Subscription By Id
+
+```http
+DELETE /push/subscriptions/{subscriptionId}
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Rules:
+
+- The subscription must belong to the current user.
+- Missing or other-user subscriptions return `404 PUSH_SUBSCRIPTION_NOT_FOUND`.
+- Removal is a soft revoke by setting `isActive=false` and `revokedAt`.
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Push subscription removed successfully"
+  }
+}
+```
+
+## 17.5 Unsubscribe Current Browser Endpoint
+
+```http
+POST /push/subscriptions/unsubscribe
+```
+
+Role:
+
+```text
+Authenticated User / Support / Admin
+```
+
+Request:
+
+```json
+{
+  "endpoint": "https://push-service.example/subscription-id"
+}
+```
+
+Rules:
+
+- This endpoint is idempotent.
+- Only the current user's matching endpoint is revoked.
+- Other device subscriptions for the same user are not removed.
+- Frontend should call this endpoint before or around logout; logout continues even if unsubscribe fails client-side.
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Push subscription removed successfully"
+  }
+}
+```
+
+## 17.6 Push Payload Schema
+
+```json
+{
+  "version": 1,
+  "notificationId": 3001,
+  "type": "NEW_MESSAGE",
+  "title": "New ticket message",
+  "body": "A new reply was added to your ticket.",
+  "url": "/app/tickets/101",
+  "ticketId": 101,
+  "createdAt": "2026-08-03T10:30:00.000Z",
+  "tag": "notification:3001",
+  "data": {
+    "url": "/app/tickets/101",
+    "notificationId": 3001,
+    "ticketId": 101
+  }
+}
+```
+
+Payload rules:
+
+- Payload is versioned with `version: 1`.
+- URL must be relative and start with `/app`.
+- If no safe ticket route exists, URL is `/app/notifications`.
+- Payload does not include full message text, attachment data, usernames, personal data, full endpoint, subscription keys, or VAPID private key.
+- Push delivery does not mark the internal Notification as read.
+
+## 17.7 Notification Type Mapping
+
+```text
+NEW_MESSAGE
+Recipient: USER ticket owner when Support/Admin replies
+URL: /app/tickets/{ticketId}
+Push body: generic new-reply text
+
+TICKET_STATUS_CHANGED
+Recipient: USER ticket owner when Support/Admin changes status
+URL: /app/tickets/{ticketId}
+Push body: generic status-change text
+
+SYSTEM_NOTIFICATION
+Recipient: specific USER only
+URL: /app/notifications
+
+NEW_TICKET_CREATED
+TICKET_ASSIGNED
+TICKET_REASSIGNED
+TICKET_DEPARTMENT_CHANGED
+Version-one Push delivery: disabled unless a USER-app-safe route is explicitly available
+```
+
+Support/Admin subscription storage is allowed by API design, but management-panel Push delivery is intentionally disabled in this version because the User Application is the only targeted PWA route space.
+
+## 17.8 Delivery Failure Behavior
+
+```text
+404 / 410
+Deactivate the subscription.
+
+401 / 403
+Treat as VAPID/provider auth or configuration failure. Keep subscription active.
+
+429 / 5xx
+Keep subscription active. No queue retry exists in this version.
+
+Payload too large / timeout
+Keep subscription active and record failure metadata.
+```
+
+Delivery logs must be sanitized. Allowed log fields include notification id, user id, subscription id, endpoint fingerprint, notification type, result, provider status code, and duration. Full endpoint, keys, private key, authorization header, and sensitive payload data must not be logged.
+
+---
+
+# 18. Final API List Summary
+
+## Auth
+
+```text
+POST   /auth/register
+POST   /auth/login
+POST   /auth/logout
+GET    /auth/me
+PATCH  /auth/me
+PATCH  /auth/change-password
+```
+
+## Files
+
+```text
+POST   /files
+```
+
+## User App Tickets
+
+```text
+GET    /user/tickets
+POST   /user/tickets
+GET    /user/tickets/{ticketId}
+POST   /user/tickets/{ticketId}/messages
+```
+
+## Notifications
+
+```text
+GET    /notifications
+PATCH  /notifications/{notificationId}/read
+PATCH  /notifications/read-all
+```
+
+## Web Push
+
+```text
+GET    /push/config
+POST   /push/subscriptions
+GET    /push/subscriptions
+DELETE /push/subscriptions/{subscriptionId}
+POST   /push/subscriptions/unsubscribe
+```
+
+## Management Overview
+
+```text
+GET    /management/overview
+```
+
+## Management Tickets
+
+```text
+GET    /management/tickets
+GET    /management/tickets/{ticketId}
+POST   /management/tickets/{ticketId}/messages
+PATCH  /management/tickets/{ticketId}/status
+PATCH  /management/tickets/{ticketId}/assignment
+PATCH  /management/tickets/{ticketId}/department
+```
+
+## Histories
+
+```text
+GET    /management/tickets/{ticketId}/assignment-history
+GET    /management/tickets/{ticketId}/status-history
+GET    /management/tickets/{ticketId}/department-history
+```
+
+## Admin Users
+
+```text
+GET    /management/users
+```
+
+## Admin Supports
+
+```text
+GET    /management/supports
+POST   /management/supports
+PATCH  /management/supports/{supportId}
+```
+
+## Admin Departments
+
+```text
+GET    /management/departments
+POST   /management/departments
+PATCH  /management/departments/{departmentId}
+```
+
+## Reports
+
+```text
+GET    /management/reports/dashboard
+POST   /management/reports/export
+```
+
+## Lookups
+
+```text
+GET    /lookups/departments
+GET    /lookups/supports
+```

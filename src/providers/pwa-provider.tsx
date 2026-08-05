@@ -112,6 +112,7 @@ const PWAProvider: FCC = ({ children }) => {
     useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallPromptDismissed, setIsInstallPromptDismissed] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+  const [isServiceWorkerReady, setIsServiceWorkerReady] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const [pushSupport] = useState<PwaPushSupport>(() =>
@@ -200,6 +201,7 @@ const PWAProvider: FCC = ({ children }) => {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/app' })
       .then((registration) => {
+        setIsServiceWorkerReady(true);
         window.sessionStorage.removeItem(PWA_UPDATE_RELOAD_SESSION_KEY);
 
         if (registration.waiting) {
@@ -239,6 +241,7 @@ const PWAProvider: FCC = ({ children }) => {
         };
       })
       .catch(() => {
+        setIsServiceWorkerReady(false);
         setIsUpdateAvailable(false);
       });
 
@@ -294,6 +297,7 @@ const PWAProvider: FCC = ({ children }) => {
         !isInstallPromptDismissed,
       isInstallPromptDismissed,
       isOnline,
+      isServiceWorkerReady,
       isStandalone,
       isUpdateAvailable,
       pushSupport,
@@ -306,6 +310,7 @@ const PWAProvider: FCC = ({ children }) => {
       installPromptEvent,
       isInstallPromptDismissed,
       isOnline,
+      isServiceWorkerReady,
       isStandalone,
       isUpdateAvailable,
       promptInstall,

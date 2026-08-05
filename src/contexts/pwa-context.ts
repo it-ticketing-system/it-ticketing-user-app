@@ -14,6 +14,7 @@ export type PwaContextValue = {
   canInstall: boolean;
   isInstallPromptDismissed: boolean;
   isOnline: boolean;
+  isServiceWorkerReady: boolean;
   isStandalone: boolean;
   isUpdateAvailable: boolean;
   pushSupport: PwaPushSupport;

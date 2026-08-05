@@ -26,7 +26,7 @@ const getPermissionState = (): PushPermissionState => {
 };
 
 const usePushNotifications = () => {
-  const { isOnline, pushSupport } = usePwa();
+  const { isOnline, isServiceWorkerReady, pushSupport } = usePwa();
   const t = useTranslations('pwa.push');
   const [permission, setPermission] = useState<PushPermissionState>(() =>
     getPermissionState(),
@@ -37,7 +37,7 @@ const usePushNotifications = () => {
   const configQuery = useGetRequest({
     queryKey: QUERY_KEYS.push.config,
     requestFn: clientPushServices.getConfig,
-    enabled: pushSupport.isSupported && isOnline,
+    enabled: pushSupport.isSupported && isServiceWorkerReady && isOnline,
     showErrorToast: false,
     staleTime: 10 * 60_000,
   });
@@ -135,6 +135,7 @@ const usePushNotifications = () => {
   const canRequestPermission = useMemo(() => {
     return (
       pushSupport.isSupported &&
+      isServiceWorkerReady &&
       isBackendEnabled &&
       isOnline &&
       permission !== 'denied' &&
@@ -144,6 +145,7 @@ const usePushNotifications = () => {
     isBackendEnabled,
     isBrowserSubscribed,
     isOnline,
+    isServiceWorkerReady,
     permission,
     pushSupport.isSupported,
   ]);
@@ -155,6 +157,7 @@ const usePushNotifications = () => {
     isBrowserSubscribed,
     isCheckingSubscription,
     isPending: subscribeMutation.isPending || unsubscribeMutation.isPending,
+    isServiceWorkerReady,
     isSupported: pushSupport.isSupported,
     permission,
     subscribe: subscribeMutation.mutateAsync,
