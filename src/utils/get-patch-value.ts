@@ -1,7 +1,4 @@
-export const getPatchValue = <
-  TPatch extends object,
-  TKey extends keyof TPatch,
->(
+export const getPatchValue = <TPatch extends object, TKey extends keyof TPatch>(
   patch: TPatch,
   key: TKey,
 ): NonNullable<TPatch[TKey]> | '' | undefined => {

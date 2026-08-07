@@ -3,7 +3,7 @@ import { Bell, Info, Settings } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { FileAttachmentLink } from '@/components/shared';
 import { ICON_SIZE_CLASS } from '@/constants';
-import { cn } from '@/utils';
+import { cn, getUserInitials } from '@/utils';
 import type { TicketMessage } from './types';
 import type { TicketSystemMessageTone } from '@/models';
 
@@ -50,7 +50,7 @@ const SenderAvatar = ({ src, name }: { src?: string; name: string }) => {
     <Avatar size="md">
       {src ? <Avatar.Image src={src} alt={name} /> : null}
 
-      <Avatar.Fallback>{name.slice(0, 1)}</Avatar.Fallback>
+      <Avatar.Fallback>{getUserInitials(name)}</Avatar.Fallback>
     </Avatar>
   );
 };
@@ -78,7 +78,7 @@ const SystemMessage = ({ message }: TicketMessageProps) => {
           </time>
         </div>
 
-        <p className="text-body-sm whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+        <p className="text-body-sm [overflow-wrap:anywhere] break-words whitespace-pre-wrap">
           {message.body}
         </p>
       </div>
@@ -135,7 +135,7 @@ const TicketMessage = ({ message }: TicketMessageProps) => {
           </time>
         </header>
 
-        <p className="text-body-sm text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+        <p className="text-body-sm text-foreground [overflow-wrap:anywhere] break-words whitespace-pre-wrap">
           {message.body}
         </p>
 

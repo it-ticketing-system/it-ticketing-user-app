@@ -29,7 +29,9 @@ const openDatabase = () => {
     request.onupgradeneeded = () => {
       const database = request.result;
 
-      if (!database.objectStoreNames.contains(PWA_QUERY_PERSISTENCE.storeName)) {
+      if (
+        !database.objectStoreNames.contains(PWA_QUERY_PERSISTENCE.storeName)
+      ) {
         database.createObjectStore(PWA_QUERY_PERSISTENCE.storeName);
       }
     };

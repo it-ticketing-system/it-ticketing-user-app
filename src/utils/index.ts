@@ -12,6 +12,7 @@ export {
   formatPersianRelativeDateTime,
 } from './format-persian-date-time';
 export { getSearchParamValue } from './get-search-param-value';
+export { getUserInitials } from './get-user-initials';
 export { getPatchValue } from './get-patch-value';
 export {
   clearAllPersistedQueryCaches,

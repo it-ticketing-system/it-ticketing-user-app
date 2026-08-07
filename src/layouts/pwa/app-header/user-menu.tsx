@@ -6,21 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ICON_SIZE_CLASS, ROUTES } from '@/constants';
 import { useAuth } from '@/hooks';
-import { cn } from '@/utils';
+import { cn, getUserInitials } from '@/utils';
 import type { Key } from 'react';
-
-const getUserInitials = (name: string) => {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-
-  if (parts.length === 0) {
-    return '';
-  }
-
-  return parts
-    .slice(0, 2)
-    .map((part) => part.charAt(0))
-    .join('');
-};
 
 const UserMenu = () => {
   const t = useTranslations('pwaLayout.appHeader');
@@ -71,7 +58,10 @@ const UserMenu = () => {
         </span>
 
         <ChevronDown
-          className={cn('text-muted hidden shrink-0 lg:block', ICON_SIZE_CLASS.sm)}
+          className={cn(
+            'text-muted hidden shrink-0 lg:block',
+            ICON_SIZE_CLASS.sm,
+          )}
         />
       </Button>
 
@@ -85,9 +75,7 @@ const UserMenu = () => {
           dir="rtl"
         >
           <Dropdown.Item id="profile" textValue={t('profile')}>
-            <UserRound
-              className={ICON_SIZE_CLASS.md}
-            />
+            <UserRound className={ICON_SIZE_CLASS.md} />
             <Label>{t('profile')}</Label>
           </Dropdown.Item>
 
@@ -99,9 +87,7 @@ const UserMenu = () => {
             variant="danger"
             isDisabled={isLoggingOut}
           >
-            <LogOut
-              className={ICON_SIZE_CLASS.md}
-            />
+            <LogOut className={ICON_SIZE_CLASS.md} />
             <Label>{t('logout')}</Label>
           </Dropdown.Item>
         </Dropdown.Menu>
