@@ -14,7 +14,9 @@ interface QueryPersistenceProviderProps {
 
 const SAVE_DEBOUNCE_MS = 750;
 
-const QueryPersistenceProvider = ({ userId }: QueryPersistenceProviderProps) => {
+const QueryPersistenceProvider = ({
+  userId,
+}: QueryPersistenceProviderProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {

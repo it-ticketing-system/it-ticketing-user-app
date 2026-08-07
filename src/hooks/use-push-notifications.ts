@@ -15,6 +15,8 @@ import useGetRequest from './use-get-request';
 import usePostRequest from './use-post-request';
 import usePwa from './use-pwa';
 
+const PUSH_SYNC_FAILED_KEY = 'push_sync_failed';
+
 type PushPermissionState = NotificationPermission | 'unsupported';
 
 const getPermissionState = (): PushPermissionState => {
@@ -26,7 +28,7 @@ const getPermissionState = (): PushPermissionState => {
 };
 
 const usePushNotifications = () => {
-  const { isOnline, isServiceWorkerReady, pushSupport } = usePwa();
+  const { isOnline, pushSupport } = usePwa();
   const t = useTranslations('pwa.push');
   const [permission, setPermission] = useState<PushPermissionState>(() =>
     getPermissionState(),
@@ -37,7 +39,7 @@ const usePushNotifications = () => {
   const configQuery = useGetRequest({
     queryKey: QUERY_KEYS.push.config,
     requestFn: clientPushServices.getConfig,
-    enabled: pushSupport.isSupported && isServiceWorkerReady && isOnline,
+    enabled: pushSupport.isSupported && isOnline,
     showErrorToast: false,
     staleTime: 10 * 60_000,
   });
@@ -53,7 +55,9 @@ const usePushNotifications = () => {
 
     try {
       const subscription = await getCurrentPushSubscription();
-      setIsBrowserSubscribed(Boolean(subscription));
+      const hasSyncFailed =
+        window.localStorage.getItem(PUSH_SYNC_FAILED_KEY) === '1';
+      setIsBrowserSubscribed(Boolean(subscription) && !hasSyncFailed);
     } finally {
       setIsCheckingSubscription(false);
     }
@@ -86,9 +90,17 @@ const usePushNotifications = () => {
         configQuery.data.vapidPublicKey,
       );
 
-      return clientPushServices.createOrUpdateSubscription(
-        toPushSubscriptionRequest(subscription),
-      );
+      try {
+        const result = await clientPushServices.createOrUpdateSubscription(
+          toPushSubscriptionRequest(subscription),
+        );
+        window.localStorage.removeItem(PUSH_SYNC_FAILED_KEY);
+        return result;
+      } catch (error) {
+        window.localStorage.setItem(PUSH_SYNC_FAILED_KEY, '1');
+        await unsubscribeCurrentBrowserFromPush().catch(() => undefined);
+        throw error;
+      }
     },
     showSuccessToast: false,
     showErrorToast: false,
@@ -96,6 +108,7 @@ const usePushNotifications = () => {
       setIsBrowserSubscribed(true);
     },
     onError: () => {
+      setIsBrowserSubscribed(false);
       toast.danger(t('failureTitle'), {
         description: t('failureDescription'),
       });
@@ -106,19 +119,23 @@ const usePushNotifications = () => {
     requestFn: async () => {
       const subscription = await getCurrentPushSubscription();
 
-      if (subscription) {
-        await clientPushServices
-          .unsubscribeCurrentBrowser({
-            endpoint: subscription.endpoint,
-          })
-          .catch(() => undefined);
+      try {
+        if (subscription) {
+          await clientPushServices
+            .unsubscribeCurrentBrowser({
+              endpoint: subscription.endpoint,
+            })
+            .catch(() => undefined);
+        }
+
+        await unsubscribeCurrentBrowserFromPush();
+
+        return {
+          message: 'Push subscription removed locally.',
+        };
+      } finally {
+        window.localStorage.removeItem(PUSH_SYNC_FAILED_KEY);
       }
-
-      await unsubscribeCurrentBrowserFromPush();
-
-      return {
-        message: 'Push subscription removed locally.',
-      };
     },
     showSuccessToast: false,
     showErrorToast: false,
@@ -135,7 +152,6 @@ const usePushNotifications = () => {
   const canRequestPermission = useMemo(() => {
     return (
       pushSupport.isSupported &&
-      isServiceWorkerReady &&
       isBackendEnabled &&
       isOnline &&
       permission !== 'denied' &&
@@ -145,7 +161,6 @@ const usePushNotifications = () => {
     isBackendEnabled,
     isBrowserSubscribed,
     isOnline,
-    isServiceWorkerReady,
     permission,
     pushSupport.isSupported,
   ]);
@@ -157,7 +172,6 @@ const usePushNotifications = () => {
     isBrowserSubscribed,
     isCheckingSubscription,
     isPending: subscribeMutation.isPending || unsubscribeMutation.isPending,
-    isServiceWorkerReady,
     isSupported: pushSupport.isSupported,
     permission,
     subscribe: subscribeMutation.mutateAsync,

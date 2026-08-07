@@ -12,13 +12,15 @@ export type PwaPushSupport = {
 
 export type PwaContextValue = {
   canInstall: boolean;
+  isIos: boolean;
   isInstallPromptDismissed: boolean;
   isOnline: boolean;
-  isServiceWorkerReady: boolean;
+  isPushPromptDismissed: boolean;
   isStandalone: boolean;
   isUpdateAvailable: boolean;
   pushSupport: PwaPushSupport;
   dismissInstallPrompt: () => void;
+  dismissPushPrompt: () => void;
   promptInstall: () => Promise<void>;
   reloadForUpdate: () => void;
 };

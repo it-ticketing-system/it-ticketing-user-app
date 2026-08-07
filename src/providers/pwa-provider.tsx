@@ -4,9 +4,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   PWA_CACHE_PREFIX,
   PWA_INSTALL_PROMPT,
+  PWA_PUSH_PROMPT,
   PWA_UPDATE_RELOAD_SESSION_KEY,
 } from '@/constants';
-import { PwaContext, type PwaContextValue, type PwaPushSupport } from '@/contexts';
+import {
+  PwaContext,
+  type PwaContextValue,
+  type PwaPushSupport,
+} from '@/contexts';
 
 type BeforeInstallPromptChoice = {
   outcome: 'accepted' | 'dismissed';
@@ -62,6 +67,31 @@ const getIsStandalone = () => {
   );
 };
 
+const getIsIos = () => {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return false;
+  }
+
+  const nav = navigator as Navigator & {
+    userAgentData?: {
+      platform?: string;
+    };
+  };
+
+  if (nav.userAgentData?.platform) {
+    if (nav.userAgentData.platform.toLowerCase() === 'ios') {
+      return true;
+    }
+  }
+
+  const userAgent = navigator.userAgent || '';
+
+  return (
+    /iPad|iPhone|iPod/i.test(userAgent) ||
+    (/Macintosh/i.test(userAgent) && navigator.maxTouchPoints > 1)
+  );
+};
+
 const getInstallPromptDismissed = () => {
   if (typeof window === 'undefined') {
     return false;
@@ -69,6 +99,18 @@ const getInstallPromptDismissed = () => {
 
   const dismissedUntil = Number(
     window.localStorage.getItem(PWA_INSTALL_PROMPT.dismissedUntilKey),
+  );
+
+  return Number.isFinite(dismissedUntil) && dismissedUntil > Date.now();
+};
+
+const getPushPromptDismissed = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const dismissedUntil = Number(
+    window.localStorage.getItem(PWA_PUSH_PROMPT.dismissedUntilKey),
   );
 
   return Number.isFinite(dismissedUntil) && dismissedUntil > Date.now();
@@ -110,22 +152,26 @@ const cleanupDevelopmentServiceWorker = async () => {
 const PWAProvider: FCC = ({ children }) => {
   const [installPromptEvent, setInstallPromptEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstallPromptDismissed, setIsInstallPromptDismissed] = useState(false);
+  const [isIos, setIsIos] = useState(false);
+  const [isInstallPromptDismissed, setIsInstallPromptDismissed] =
+    useState(false);
+  const [isPushPromptDismissed, setIsPushPromptDismissed] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
-  const [isServiceWorkerReady, setIsServiceWorkerReady] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
-  const [pushSupport] = useState<PwaPushSupport>(() =>
-    getPushSupport(),
+  const [pushSupport] = useState<PwaPushSupport>(() => getPushSupport());
+  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(
+    null,
   );
-  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
 
   useEffect(() => {
     const displayModeQuery = window.matchMedia('(display-mode: standalone)');
     const hydrationTimeoutId = window.setTimeout(() => {
       setIsOnline(navigator.onLine);
+      setIsIos(getIsIos());
       setIsStandalone(getIsStandalone());
       setIsInstallPromptDismissed(getInstallPromptDismissed());
+      setIsPushPromptDismissed(getPushPromptDismissed());
     }, 0);
     const updateOnlineState = () => setIsOnline(navigator.onLine);
     const updateStandaloneState = () => setIsStandalone(getIsStandalone());
@@ -158,7 +204,10 @@ const PWAProvider: FCC = ({ children }) => {
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt,
+      );
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
@@ -201,7 +250,6 @@ const PWAProvider: FCC = ({ children }) => {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/app' })
       .then((registration) => {
-        setIsServiceWorkerReady(true);
         window.sessionStorage.removeItem(PWA_UPDATE_RELOAD_SESSION_KEY);
 
         if (registration.waiting) {
@@ -241,7 +289,6 @@ const PWAProvider: FCC = ({ children }) => {
         };
       })
       .catch(() => {
-        setIsServiceWorkerReady(false);
         setIsUpdateAvailable(false);
       });
 
@@ -256,7 +303,10 @@ const PWAProvider: FCC = ({ children }) => {
       }
 
       if (handleVisibilityChange) {
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        document.removeEventListener(
+          'visibilitychange',
+          handleVisibilityChange,
+        );
       }
     };
   }, []);
@@ -268,6 +318,15 @@ const PWAProvider: FCC = ({ children }) => {
       String(dismissedUntil),
     );
     setIsInstallPromptDismissed(true);
+  }, []);
+
+  const dismissPushPrompt = useCallback(() => {
+    const dismissedUntil = Date.now() + PWA_PUSH_PROMPT.dismissTtlMs;
+    window.localStorage.setItem(
+      PWA_PUSH_PROMPT.dismissedUntilKey,
+      String(dismissedUntil),
+    );
+    setIsPushPromptDismissed(true);
   }, []);
 
   const promptInstall = useCallback(async () => {
@@ -291,26 +350,27 @@ const PWAProvider: FCC = ({ children }) => {
 
   const value = useMemo<PwaContextValue>(
     () => ({
-      canInstall:
-        Boolean(installPromptEvent) &&
-        !isStandalone &&
-        !isInstallPromptDismissed,
+      canInstall: Boolean(installPromptEvent) && !isStandalone,
+      isIos,
       isInstallPromptDismissed,
       isOnline,
-      isServiceWorkerReady,
+      isPushPromptDismissed,
       isStandalone,
       isUpdateAvailable,
       pushSupport,
       dismissInstallPrompt,
+      dismissPushPrompt,
       promptInstall,
       reloadForUpdate,
     }),
     [
       dismissInstallPrompt,
+      dismissPushPrompt,
       installPromptEvent,
+      isIos,
       isInstallPromptDismissed,
       isOnline,
-      isServiceWorkerReady,
+      isPushPromptDismissed,
       isStandalone,
       isUpdateAvailable,
       promptInstall,

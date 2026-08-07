@@ -15,4 +15,9 @@ export const PWA_INSTALL_PROMPT = {
   dismissTtlMs: 7 * 24 * 60 * 60 * 1000,
 } as const;
 
+export const PWA_PUSH_PROMPT = {
+  dismissedUntilKey: 'pwa:push-dismissed-until',
+  dismissTtlMs: 7 * 24 * 60 * 60 * 1000,
+} as const;
+
 export const PWA_UPDATE_RELOAD_SESSION_KEY = 'pwa:update-reload-requested';

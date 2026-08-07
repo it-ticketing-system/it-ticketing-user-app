@@ -15,7 +15,10 @@ const NetworkIndicator = () => {
 
   return (
     <div className="border-warning bg-warning-soft text-warning-soft-foreground flex items-start gap-2 rounded-xl border px-3 py-2 text-start">
-      <WifiOff aria-hidden="true" className={`${ICON_SIZE_CLASS.sm} mt-1 shrink-0`} />
+      <WifiOff
+        aria-hidden="true"
+        className={`${ICON_SIZE_CLASS.sm} mt-1 shrink-0`}
+      />
       <p className="text-body-sm leading-6">{t('offline')}</p>
     </div>
   );

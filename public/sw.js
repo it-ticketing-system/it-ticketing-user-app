@@ -5,7 +5,11 @@ const STATIC_CACHE = `${APP_CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const OFFLINE_URL = '/app/offline';
 const NOTIFICATIONS_URL = '/app/notifications';
 const APP_SCOPE = '/app';
-const PRECACHE_URLS = [OFFLINE_URL, '/icons/icon-192.png', '/icons/icon-512.png'];
+const PRECACHE_URLS = [
+  OFFLINE_URL,
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+];
 const PRIVATE_API_PREFIXES = [
   '/api/backend/auth',
   '/api/backend/user',
@@ -20,7 +24,9 @@ const isPrivateApiRequest = (url) => {
 };
 
 const isPublicAssetRequest = (url) => {
-  return PUBLIC_ASSET_PREFIXES.some((prefix) => url.pathname.startsWith(prefix));
+  return PUBLIC_ASSET_PREFIXES.some((prefix) =>
+    url.pathname.startsWith(prefix),
+  );
 };
 
 const getSafeAppUrl = (value) => {
@@ -83,6 +89,28 @@ const networkFirstNavigation = async (request) => {
     }
 
     return new Response('Offline', {
+      status: 503,
+      statusText: 'Offline',
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+  }
+};
+
+const rscNetworkFirst = async (request) => {
+  const cache = await caches.open(SHELL_CACHE);
+
+  try {
+    const response = await fetch(request);
+    await putIfCacheable(SHELL_CACHE, request, response);
+    return response;
+  } catch {
+    const cachedResponse = await cache.match(request);
+
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    return new Response('RSC Offline Fallback', {
       status: 503,
       statusText: 'Offline',
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -157,6 +185,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  if (url.searchParams.has('_rsc') && url.pathname.startsWith(APP_SCOPE)) {
+    event.respondWith(rscNetworkFirst(request));
+    return;
+  }
+
   if (request.mode === 'navigate' && url.pathname.startsWith(APP_SCOPE)) {
     event.respondWith(networkFirstNavigation(request));
     return;
@@ -203,8 +236,9 @@ self.addEventListener('notificationclick', (event) => {
   const absoluteUrl = new URL(url, self.location.origin).href;
 
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(
-      (clients) => {
+    self.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clients) => {
         const existingClient = clients.find((client) => {
           return client.url.startsWith(self.location.origin);
         });
@@ -215,7 +249,6 @@ self.addEventListener('notificationclick', (event) => {
         }
 
         return self.clients.openWindow(absoluteUrl);
-      },
-    ),
+      }),
   );
 });

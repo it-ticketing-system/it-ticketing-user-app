@@ -41,10 +41,7 @@ const PageHeaderAction = ({ action, label }: PageHeaderActionProps) => {
       )}
     >
       <span className="hidden lg:inline">{label}</span>
-      <Icon
-        aria-hidden="true"
-        className={cn(ICON_SIZE_CLASS.md, 'shrink-0')}
-      />
+      <Icon aria-hidden="true" className={cn(ICON_SIZE_CLASS.md, 'shrink-0')} />
     </Link>
   );
 };

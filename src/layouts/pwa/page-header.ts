@@ -4,11 +4,7 @@ import type { ButtonVariants } from '@heroui/react';
 import type { LucideIcon } from 'lucide-react';
 
 export type PwaPageHeaderMessageKey =
-  | 'tickets'
-  | 'createTicket'
-  | 'ticketDetails'
-  | 'notifications'
-  | 'profile';
+  'tickets' | 'createTicket' | 'ticketDetails' | 'notifications' | 'profile';
 
 export type PwaPageHeaderActionConfig = {
   href: string;
