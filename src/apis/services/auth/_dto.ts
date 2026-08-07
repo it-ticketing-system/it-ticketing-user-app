@@ -1,9 +1,7 @@
 export type AuthUserRoleDto = 'USER' | 'SUPPORT' | 'ADMIN';
 
 export type SupportAvailabilityStatusDto =
-  | 'AVAILABLE'
-  | 'ON_LEAVE'
-  | 'INACTIVE';
+  'AVAILABLE' | 'ON_LEAVE' | 'INACTIVE';
 
 export interface AuthDepartmentDto {
   id: number;

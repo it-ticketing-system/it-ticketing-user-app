@@ -8,11 +8,7 @@ export type NotificationType =
   | 'systemNotification';
 
 export type NotificationTab =
-  | 'all'
-  | 'unread'
-  | 'messages'
-  | 'assignments'
-  | 'system';
+  'all' | 'unread' | 'messages' | 'assignments' | 'system';
 
 export interface INotificationRelatedEntity {
   type: 'TICKET' | string;

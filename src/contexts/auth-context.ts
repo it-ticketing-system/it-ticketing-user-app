@@ -4,8 +4,7 @@ import { createContext } from 'react';
 import type { ApiException } from '@/apis/core/api-error';
 import type { IUser } from '@/models';
 
-type AuthStatus =
-  'loading' | 'authenticated' | 'unauthenticated' | 'error';
+type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated' | 'error';
 
 interface AuthContextValue {
   user: IUser | null;

@@ -8,11 +8,7 @@ export type NotificationTypeDto =
   | 'SYSTEM_NOTIFICATION';
 
 export type NotificationTabDto =
-  | 'all'
-  | 'unread'
-  | 'messages'
-  | 'assignments'
-  | 'system';
+  'all' | 'unread' | 'messages' | 'assignments' | 'system';
 
 export interface GetNotificationsRequestDto {
   tab?: NotificationTabDto;

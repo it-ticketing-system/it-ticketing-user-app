@@ -67,10 +67,7 @@ export function createNotificationServices(
   }
 
   async function markAllNotificationsAsRead(): Promise<MarkAllNotificationsReadResult> {
-    return request<
-      MarkAllNotificationsReadResponseDto,
-      Record<string, never>
-    >({
+    return request<MarkAllNotificationsReadResponseDto, Record<string, never>>({
       url: NOTIFICATION_ENDPOINTS.markAllRead,
       method: 'PATCH',
       data: {},

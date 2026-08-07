@@ -72,9 +72,9 @@ function usePostRequest<TPayload, TResponse>({
   const mutation = useMutation<TResponse, ApiException, TPayload | undefined>({
     mutationFn: async (payload) => {
       try {
-        return await (
-          requestFn as (payload?: TPayload) => Promise<TResponse>
-        )(payload);
+        return await (requestFn as (payload?: TPayload) => Promise<TResponse>)(
+          payload,
+        );
       } catch (error) {
         throw normalizeApiError(error);
       }
@@ -85,8 +85,7 @@ function usePostRequest<TPayload, TResponse>({
         const description =
           (
             getSuccessDescription as
-              | ((data: TResponse, payload?: TPayload) => string)
-              | undefined
+              ((data: TResponse, payload?: TPayload) => string) | undefined
           )?.(response, payload) ?? t('toast.successDescription');
 
         toast.success(t('toast.successTitle'), {

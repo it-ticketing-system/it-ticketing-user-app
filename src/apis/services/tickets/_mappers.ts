@@ -18,11 +18,7 @@ import type {
   GetMyTicketsRequest,
   SendTicketMessageRequest,
 } from './_types';
-import type {
-  ITicket,
-  ITicketMessage,
-  TicketStatus,
-} from '@/models';
+import type { ITicket, ITicketMessage, TicketStatus } from '@/models';
 
 const TICKET_STATUS_MAP = {
   OPEN: 'open',

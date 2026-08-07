@@ -16,9 +16,7 @@ import type {
 import type { ApiRequestFunction } from '@/apis/core/types/api-request.types';
 
 export function createPushServices(request: ApiRequestFunction) {
-  async function getConfig(
-    signal?: AbortSignal,
-  ): Promise<PushConfigResponse> {
+  async function getConfig(signal?: AbortSignal): Promise<PushConfigResponse> {
     return request<PushConfigResponseDto>({
       url: PUSH_ENDPOINTS.config,
       method: 'GET',

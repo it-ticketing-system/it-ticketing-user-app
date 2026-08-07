@@ -10,6 +10,7 @@ export { PAGE_SIZE } from './pagination';
 export {
   PWA_CACHE_PREFIX,
   PWA_INSTALL_PROMPT,
+  PWA_PUSH_PROMPT,
   PWA_QUERY_PERSISTENCE,
   PWA_UPDATE_RELOAD_SESSION_KEY,
 } from './pwa';

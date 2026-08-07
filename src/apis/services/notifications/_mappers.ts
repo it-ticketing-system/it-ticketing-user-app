@@ -1,8 +1,5 @@
 import { ROUTES } from '@/constants';
-import {
-  formatPersianDateTime,
-  formatPersianRelativeDateTime,
-} from '@/utils';
+import { formatPersianDateTime, formatPersianRelativeDateTime } from '@/utils';
 import type {
   MarkNotificationReadResponseDto,
   NotificationDto,
