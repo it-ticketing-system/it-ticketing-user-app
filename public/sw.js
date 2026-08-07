@@ -9,6 +9,7 @@ const PRECACHE_URLS = [
   OFFLINE_URL,
   '/icons/icon-192.png',
   '/icons/icon-512.png',
+  '/logo/logo-mark-primary-512.png',
 ];
 const PRIVATE_API_PREFIXES = [
   '/api/backend/auth',
@@ -17,7 +18,13 @@ const PRIVATE_API_PREFIXES = [
   '/api/backend/files',
   '/api/backend/push',
 ];
-const PUBLIC_ASSET_PREFIXES = ['/icons/', '/logo/', '/auth/', '/hero/'];
+const PUBLIC_ASSET_PREFIXES = [
+  '/icons/',
+  '/logo/',
+  '/auth/',
+  '/hero/',
+  '/_next/image',
+];
 
 const isPrivateApiRequest = (url) => {
   return PRIVATE_API_PREFIXES.some((prefix) => url.pathname.startsWith(prefix));

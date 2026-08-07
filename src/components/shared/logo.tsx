@@ -8,6 +8,7 @@ const Logo: FC = () => {
       width={40}
       height={40}
       alt="Logo"
+      unoptimized
     />
   );
 };
