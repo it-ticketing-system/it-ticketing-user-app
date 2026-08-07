@@ -7,6 +7,7 @@ const NOTIFICATIONS_URL = '/app/notifications';
 const APP_SCOPE = '/app';
 const PRECACHE_URLS = [
   OFFLINE_URL,
+  `${OFFLINE_URL}?_rsc=1`,
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/logo/logo-mark-primary-512.png',
@@ -92,6 +93,15 @@ const networkFirstNavigation = async (request) => {
     const offlineResponse = await cache.match(OFFLINE_URL);
 
     if (offlineResponse) {
+      const requestUrl = new URL(request.url);
+
+      if (requestUrl.pathname !== OFFLINE_URL) {
+        return Response.redirect(
+          new URL(OFFLINE_URL, self.location.origin).href,
+          302,
+        );
+      }
+
       return offlineResponse;
     }
 
@@ -115,6 +125,14 @@ const rscNetworkFirst = async (request) => {
 
     if (cachedResponse) {
       return cachedResponse;
+    }
+
+    const offlineRscResponse =
+      (await cache.match(`${OFFLINE_URL}?_rsc=1`)) ||
+      (await cache.match(OFFLINE_URL));
+
+    if (offlineRscResponse) {
+      return offlineRscResponse;
     }
 
     return new Response('RSC Offline Fallback', {
