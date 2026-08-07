@@ -88,8 +88,8 @@ const NotificationsClient = ({
   const notificationsError =
     notificationsQuery.error ??
     (initialNotificationsError &&
-        areNotificationFiltersEqual(filters, initialFilters) &&
-        !notificationsQuery.isFetched
+    areNotificationFiltersEqual(filters, initialFilters) &&
+    !notificationsQuery.isFetched
       ? initialNotificationsError
       : null);
 
@@ -135,9 +135,7 @@ const NotificationsClient = ({
     const href = notification.relatedEntity?.href;
 
     if (!notification.isRead && isOnline) {
-      void markReadMutation
-        .mutateAsync(notification.id)
-        .catch(() => undefined);
+      void markReadMutation.mutateAsync(notification.id).catch(() => undefined);
     }
 
     if (href) {

@@ -10,5 +10,6 @@ export interface TicketDetailsInitialData {
 }
 
 export interface TicketDetailsModuleProps {
+  ticketId: string;
   initialData: TicketDetailsInitialData;
 }

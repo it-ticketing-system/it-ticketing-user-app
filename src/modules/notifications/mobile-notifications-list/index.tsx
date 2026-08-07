@@ -70,7 +70,7 @@ const MobileNotificationsList = ({
                   : 'border-primary-100 bg-primary-50 min-h-24 rounded-xl border shadow-sm'
               }
             >
-              <Card.Content className="p-4">
+              <Card.Content>
                 <div className="flex items-start gap-3">
                   <NotificationIcon
                     type={notification.type}
@@ -99,7 +99,8 @@ const MobileNotificationsList = ({
 
                       {notification.relatedEntity?.ticketNumber ? (
                         <span dir="ltr" className="font-latin text-accent">
-                          #{notification.relatedEntity.ticketNumber.replace(
+                          #
+                          {notification.relatedEntity.ticketNumber.replace(
                             /^#/,
                             '',
                           )}

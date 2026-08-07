@@ -14,12 +14,7 @@ import type { NotificationListViewProps } from './types';
 import type { TableHeaderOptions } from '@/containers';
 
 type NotificationTableColumnKey =
-  | 'status'
-  | 'title'
-  | 'body'
-  | 'related'
-  | 'time'
-  | 'actions';
+  'status' | 'title' | 'body' | 'related' | 'time' | 'actions';
 
 const NotificationsDesktopTable = ({
   items,

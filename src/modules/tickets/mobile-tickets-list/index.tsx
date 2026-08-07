@@ -7,10 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Suspense } from 'react';
 import { TicketStatusChip } from '@/components/shared';
 import { ICON_SIZE_CLASS } from '@/constants';
-import {
-  TablePagination,
-  TablePaginationFallback,
-} from '@/containers';
+import { TablePagination, TablePaginationFallback } from '@/containers';
 import { MobileTicketCardSkeleton } from '../skeleton/mobile-tickets-list-skeleton';
 import {
   TicketsTableEmptyState,
@@ -67,9 +64,9 @@ const MobileTicketsList = ({
             >
               <Card
                 variant="transparent"
-                className="border-border bg-surface min-h-34 gap-0 overflow-hidden rounded-xl border p-0 shadow-sm transition duration-150 hover:-translate-y-px hover:shadow-md"
+                className="border-border bg-surface min-h-34 gap-3 overflow-hidden rounded-xl border shadow-sm transition duration-150 hover:-translate-y-px hover:shadow-md"
               >
-                <Card.Header className="flex-row items-start justify-between gap-4 p-4 pb-0">
+                <Card.Header className="flex-row items-start justify-between gap-4">
                   <span
                     dir="ltr"
                     className="font-latin text-caption text-muted font-medium whitespace-nowrap"
@@ -83,7 +80,7 @@ const MobileTicketsList = ({
                   />
                 </Card.Header>
 
-                <Card.Content className="space-y-1 px-4 py-3">
+                <Card.Content className="space-y-1">
                   <h3 className="text-body text-foreground line-clamp-2 font-semibold">
                     {ticket.title}
                   </h3>
@@ -93,13 +90,12 @@ const MobileTicketsList = ({
                   </p>
                 </Card.Content>
 
-                <Card.Footer className="border-separator mt-auto flex-row items-center justify-between border-t px-4 py-3">
+                <Card.Footer className="border-separator mt-auto flex-row items-center justify-between border-t pt-3">
                   <div className="text-caption text-muted flex min-w-0 items-center gap-1.5">
                     <Clock3
                       aria-hidden="true"
                       className={`${ICON_SIZE_CLASS.sm} shrink-0`}
                     />
-
                     <span className="truncate">{ticket.lastUpdatedLabel}</span>
                   </div>
 

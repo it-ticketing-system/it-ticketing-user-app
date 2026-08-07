@@ -330,7 +330,7 @@
   }
 
   .pagination {
-    @apply w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4;
+    @apply w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-4;
 
     .pagination__summary {
       @apply text-caption text-muted whitespace-nowrap;
@@ -358,5 +358,25 @@
     .modal__heading {
       @apply text-title;
     }
+  }
+
+  .card {
+    @apply p-4;
+
+    @variant lg {
+      @apply p-6;
+    }
+  }
+
+  .card__header {
+    @apply px-0 py-0;
+  }
+
+  .card__content {
+    @apply px-0 py-0;
+  }
+
+  .card__footer {
+    @apply px-0 py-0;
   }
 }

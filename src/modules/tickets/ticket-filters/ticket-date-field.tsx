@@ -83,13 +83,19 @@ const TicketDateField = ({
           <Calendar>
             <Calendar.Header>
               <Calendar.NavButton slot="previous">
-                <ChevronRight aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
+                <ChevronRight
+                  aria-hidden="true"
+                  className={ICON_SIZE_CLASS.sm}
+                />
               </Calendar.NavButton>
 
               <Calendar.Heading />
 
               <Calendar.NavButton slot="next">
-                <ChevronLeft aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
+                <ChevronLeft
+                  aria-hidden="true"
+                  className={ICON_SIZE_CLASS.sm}
+                />
               </Calendar.NavButton>
             </Calendar.Header>
 

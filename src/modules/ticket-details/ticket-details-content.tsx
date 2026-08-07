@@ -8,13 +8,17 @@ import TicketInfoCard from './ticket-info-card';
 import type { TicketDetailsInitialData } from './types';
 
 interface TicketDetailsContentProps {
+  ticketId: string;
   initialData: TicketDetailsInitialData;
 }
 
-const TicketDetailsContent = ({ initialData }: TicketDetailsContentProps) => {
+const TicketDetailsContent = ({
+  ticketId,
+  initialData,
+}: TicketDetailsContentProps) => {
   const { data } = useGetRequest({
-    queryKey: QUERY_KEYS.tickets.details(initialData.ticket.id),
-    requestFn: () => clientTicketServices.getTicketDetails(initialData.ticket.id),
+    queryKey: QUERY_KEYS.tickets.details(ticketId),
+    requestFn: () => clientTicketServices.getTicketDetails(ticketId),
     initialData,
     showErrorToast: false,
     staleTime: 30_000,

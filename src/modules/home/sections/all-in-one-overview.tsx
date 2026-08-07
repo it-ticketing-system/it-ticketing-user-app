@@ -56,9 +56,7 @@ const AllInOneOverview = () => {
                   </span>
 
                   <div className="bg-primary-50 text-primary-500 group-hover:bg-primary-100 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-250">
-                    <Icon
-                      className={ICON_SIZE_CLASS.md}
-                    />
+                    <Icon className={ICON_SIZE_CLASS.md} />
                   </div>
                 </div>
               ))}

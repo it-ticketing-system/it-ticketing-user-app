@@ -41,7 +41,7 @@ const TicketsTable = ({
   };
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       {topContent}
       {mode === null && <TicketsTableModeFallback />}
       {mode === 'desktop' && <TicketsDesktopTable {...viewProps} />}

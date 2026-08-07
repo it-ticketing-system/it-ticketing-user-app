@@ -21,7 +21,9 @@ const Page = async ({ params }: TicketDetailsPageProps) => {
   const { 'ticket-id': rawTicketId } = await params;
   const ticketDetails = await getTicketDetailsInitialData(rawTicketId);
 
-  return <TicketDetailsModule initialData={ticketDetails} />;
+  return (
+    <TicketDetailsModule ticketId={rawTicketId} initialData={ticketDetails} />
+  );
 };
 
 export default Page;

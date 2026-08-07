@@ -170,7 +170,8 @@ const MessageComposer = ({ ticketId, isClosed }: MessageComposerProps) => {
     await sendMessage(data);
   };
 
-  const isSubmitDisabled = isClosed || isPending || !isOnline || !message.trim();
+  const isSubmitDisabled =
+    isClosed || isPending || !isOnline || !message.trim();
 
   if (isClosed) {
     return (

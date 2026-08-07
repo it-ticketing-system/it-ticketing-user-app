@@ -120,9 +120,7 @@ const LoginModule = () => {
         />
       </div>
 
-      {!isOnline ? (
-        <OnlineOnlyNotice>{tPwa('login')}</OnlineOnlyNotice>
-      ) : null}
+      {!isOnline ? <OnlineOnlyNotice>{tPwa('login')}</OnlineOnlyNotice> : null}
 
       <div className="flex w-full flex-col gap-3">
         <Button

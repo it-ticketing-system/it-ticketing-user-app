@@ -76,9 +76,7 @@ export const NotificationListEmptyState = ({
           {hasActiveFilter ? t('noResult.title') : t('empty.title')}
         </p>
         <p className="text-body-sm text-muted">
-          {hasActiveFilter
-            ? t('noResult.description')
-            : t('empty.description')}
+          {hasActiveFilter ? t('noResult.description') : t('empty.description')}
         </p>
       </div>
 

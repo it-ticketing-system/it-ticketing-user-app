@@ -70,8 +70,8 @@ const TicketsClient = ({
   const ticketsError =
     ticketsQuery.error ??
     (initialTicketsError &&
-        areTicketFiltersEqual(filters, initialFilters) &&
-        !ticketsQuery.isFetched
+    areTicketFiltersEqual(filters, initialFilters) &&
+    !ticketsQuery.isFetched
       ? initialTicketsError
       : null);
 
