@@ -39,19 +39,18 @@
 
 ## Naming and exports
 
-- File and folder names in `src` must be `kebab-case`. Next route groups such
-  as `(pwa)` and API service convention files such as `_dto.ts`,
-  `_services.ts`, `_types.ts`, `_mappers.ts`, and `_endpoints.ts` are explicit
-  exceptions.
+- File and folder names in `src` must be `kebab-case`. Next route groups such as
+  `(pwa)` and API service convention files such as `_dto.ts`, `_services.ts`,
+  `_types.ts`, `_mappers.ts`, and `_endpoints.ts` are explicit exceptions.
 - Localization JSON files in `messages/fa` must be `camelCase`, and the same
   camelCase keys must be used in `global.d.ts`, `src/i18n/request.ts`, and
   `useTranslations()` / `getTranslations()` calls.
 - Public imports from `src/constants`, `src/modules`, `src/models`,
   `src/components/shared`, `src/containers`, `src/contexts`, `src/providers`,
   `src/hooks`, `src/layouts`, and `src/utils` must go through that folder's
-  `index` file. For default exports, expose them with named aliases, for
-  example `export { default as PWALayout } from './pwa';`, and import from the
-  folder root such as `@/layouts`.
+  `index` file. For default exports, expose them with named aliases, for example
+  `export { default as PWALayout } from './pwa';`, and import from the folder
+  root such as `@/layouts`.
 - Keep barrel files explicit. Do not use broad `export *` unless the file is a
   deliberate type-only boundary and there is a clear reason.
 - Remove unused imports and unused exports as part of every change. Do not keep
@@ -96,6 +95,9 @@
   expensive recalculation.
 - Use `cn` from `@/utils` for className composition instead of manual string
   concatenation.
+- Do not use deprecated browser APIs or properties (such as `navigator.platform`
+  or `navigator.vendor`). Use modern standards like `navigator.userAgentData`
+  when available or safe `navigator.userAgent` testing.
 - Use `getTranslations()` in async server components/metadata and
   `useTranslations()` in client/shared components.
 - Do not hardcode UI copy when it belongs in `messages/fa`.
@@ -173,7 +175,6 @@
   `px-4 sm:px-5 md:px-6 lg:px-8`. PWA shell/header/bottom navigation must reuse
   `PWA_SHELL_CONTAINER_CLASS` from `src/layouts/pwa/shared.ts`. PWA header
   height, content offset, and page fill height must stay explicit through
-  `PWA_HEADER_HEIGHT_CLASS`, `PWA_CONTENT_SPACING_CLASS`, and
   `PWA_CONTENT_MIN_HEIGHT_CLASS`, not page-local spacing hacks.
 - PWA page titles, descriptions, and page actions belong in
   `messages/fa/pageHeader.json` as `title`, `description`, and `actionText`.
@@ -201,6 +202,8 @@
   instead of importing a duplicate Lucide icon in the component.
 - Use `DImage` for responsive marketing/decorative imagery and `BREAKPOINTS` for
   media-query thresholds.
+- Desktop layouts and responsiveness must use the `lg` breakpoint (`>= 768px`),
+  not `md`.
 - Preserve RTL semantics and safe-area handling. Do not add dark mode unless
   explicitly requested.
 
