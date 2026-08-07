@@ -41,9 +41,7 @@ export const createProfilePasswordSchema = (
 ) =>
   z
     .object({
-      currentPassword: z
-        .string()
-        .min(1, messages.currentPasswordRequired),
+      currentPassword: z.string().min(1, messages.currentPasswordRequired),
 
       newPassword: z
         .string()

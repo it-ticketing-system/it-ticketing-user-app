@@ -6,6 +6,7 @@ import LogoutSection from './logout-section';
 import ProfileEditor from './profile-editor';
 import ProfileErrorState from './profile-error-state';
 import ProfileSkeleton from './profile-skeleton';
+import PwaSettingsCard from './pwa-settings-card';
 
 const ProfileModule = () => {
   const { user, isLoading, isFetching, error, refresh } = useAuth();
@@ -29,6 +30,7 @@ const ProfileModule = () => {
     <section className="grid w-full flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,19rem)] lg:items-start lg:gap-6">
       <div className="flex min-w-0 flex-col gap-4 lg:gap-6">
         <ProfileEditor user={user} onProfileRefresh={refresh} />
+        <PwaSettingsCard />
         <AccountSecurity />
       </div>
 

@@ -22,7 +22,7 @@ const SectionHeader = ({
       : 'bg-accent-soft text-accent-soft-foreground';
 
   return (
-    <Card.Header className="flex-row items-start gap-3 p-4 pb-0 lg:p-6 lg:pb-0">
+    <Card.Header className="flex-row items-start gap-3">
       <span
         aria-hidden="true"
         className={cn(
