@@ -1,5 +1,5 @@
 export const TICKET_ATTACHMENT_MAX_FILES = 5;
-export const TICKET_ATTACHMENT_MAX_SIZE = 10 * 1024 * 1024;
+export const TICKET_ATTACHMENT_MAX_SIZE = 5 * 1024 * 1024;
 export const TICKET_ATTACHMENT_ALLOWED_EXTENSIONS = [
   'jpg',
   'jpeg',
