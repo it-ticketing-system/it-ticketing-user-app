@@ -43,3 +43,7 @@ next-env.d.ts
 # IDEs and editors
 .vscode
 
+# Local documentation & agent configs
+/docs/
+AGENTS.md
+CLAUDE.md
