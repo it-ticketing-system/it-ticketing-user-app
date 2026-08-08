@@ -2,6 +2,7 @@ import { getRequestConfig } from 'next-intl/server';
 import auth from '../../messages/fa/auth.json';
 import common from '../../messages/fa/common.json';
 import createTicket from '../../messages/fa/createTicket.json';
+import error from '../../messages/fa/error.json';
 import footer from '../../messages/fa/footer.json';
 import header from '../../messages/fa/header.json';
 import home from '../../messages/fa/home.json';
@@ -27,6 +28,7 @@ export default getRequestConfig(async () => {
       footer,
       auth,
       common,
+      error,
       offline,
       pageHeader,
       profile,

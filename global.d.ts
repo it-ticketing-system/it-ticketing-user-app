@@ -2,6 +2,7 @@ import { FC, PropsWithChildren } from 'react';
 import auth from './messages/fa/auth.json';
 import common from './messages/fa/common.json';
 import createTicket from './messages/fa/createTicket.json';
+import error from './messages/fa/error.json';
 import footer from './messages/fa/footer.json';
 import header from './messages/fa/header.json';
 import home from './messages/fa/home.json';
@@ -23,6 +24,7 @@ type Messages = {
   home: typeof home;
   footer: typeof footer;
   common: typeof common;
+  error: typeof error;
   offline: typeof offline;
   pageHeader: typeof pageHeader;
   profile: typeof profile;

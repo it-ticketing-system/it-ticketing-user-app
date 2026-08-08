@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { getTicketDetailsInitialData, TicketDetailsModule } from '@/modules';
+import { TicketDetailsModule } from '@/modules';
+import { getTicketDetailsInitialData } from '@/modules/ticket-details/ticket-details.server';
 
 type TicketDetailsPageProps = {
   params: Promise<{
