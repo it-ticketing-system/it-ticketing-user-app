@@ -185,33 +185,6 @@
       @apply text-muted;
     }
 
-    .select__popover {
-      @apply border-border bg-surface rounded-lg border p-1 text-right shadow-lg;
-
-      min-width: var(--trigger-width);
-
-      [data-slot='list-box'] {
-        @apply max-h-64 overflow-y-auto p-0 text-right outline-none;
-        direction: rtl;
-      }
-
-      [data-slot='list-box-item'] {
-        @apply text-body-sm text-foreground flex cursor-default items-center justify-between gap-3 rounded-md px-3 py-2.5 outline-none;
-
-        &[data-focused='true'] {
-          @apply bg-default;
-        }
-
-        &[data-selected='true'] {
-          @apply bg-accent-soft text-accent-soft-foreground;
-        }
-      }
-
-      [data-slot='list-box-item-indicator'] {
-        @apply text-accent shrink-0;
-      }
-    }
-
     &.select--secondary {
       .select__trigger {
         @apply bg-surface;
@@ -220,6 +193,33 @@
         --select-trigger-bg-hover: var(--surface);
         --select-trigger-bg-focus: var(--surface);
       }
+    }
+  }
+
+  .select__popover {
+    @apply border-border bg-surface rounded-lg border p-1 text-right shadow-lg;
+
+    min-width: var(--trigger-width);
+
+    [data-slot='list-box'] {
+      @apply max-h-64 overflow-y-auto p-0 text-right outline-none;
+      direction: rtl;
+    }
+
+    [data-slot='list-box-item'] {
+      @apply text-body-sm text-foreground flex cursor-default items-center justify-between gap-3 rounded-md px-3 py-2.5 outline-none;
+
+      &[data-focused='true'] {
+        @apply bg-default;
+      }
+
+      &[data-selected='true'] {
+        @apply bg-accent-soft text-accent-soft-foreground;
+      }
+    }
+
+    [data-slot='list-box-item-indicator'] {
+      @apply text-accent shrink-0;
     }
   }
 
