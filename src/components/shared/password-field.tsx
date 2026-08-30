@@ -21,6 +21,8 @@ interface PasswordFieldProps {
   showPasswordLabel: string;
   hidePasswordLabel: string;
   isDisabled?: boolean;
+  maxLength?: number;
+  forceMasked?: boolean;
 }
 
 const PasswordField = ({
@@ -32,6 +34,8 @@ const PasswordField = ({
   showPasswordLabel,
   hidePasswordLabel,
   isDisabled = false,
+  maxLength,
+  forceMasked = false,
 }: PasswordFieldProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const visibilityLabel = isVisible ? hidePasswordLabel : showPasswordLabel;
@@ -44,9 +48,10 @@ const PasswordField = ({
       <InputGroup fullWidth variant="secondary">
         <InputGroup.Input
           {...registration}
-          type={isVisible ? 'text' : 'password'}
+          type={forceMasked || !isVisible ? 'password' : 'text'}
           autoComplete={autoComplete}
           disabled={isDisabled}
+          maxLength={maxLength}
           placeholder={placeholder}
         />
 

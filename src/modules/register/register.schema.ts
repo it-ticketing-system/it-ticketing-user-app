@@ -3,12 +3,16 @@ import { z } from 'zod';
 interface RegisterSchemaMessages {
   nameRequired: string;
   nameMinLength: string;
+  nameMaxLength: string;
 
   usernameRequired: string;
   usernameMinLength: string;
+  usernameMaxLength: string;
+  usernameInvalid: string;
 
   passwordRequired: string;
   passwordMinLength: string;
+  passwordMaxLength: string;
   passwordLowercase: string;
   passwordUppercase: string;
   passwordNumber: string;
@@ -18,6 +22,13 @@ interface RegisterSchemaMessages {
   passwordMismatch: string;
 }
 
+export const REGISTER_NAME_MIN_LENGTH = 2;
+export const REGISTER_NAME_MAX_LENGTH = 50;
+export const REGISTER_USERNAME_MIN_LENGTH = 3;
+export const REGISTER_USERNAME_MAX_LENGTH = 30;
+export const REGISTER_PASSWORD_MIN_LENGTH = 8;
+export const REGISTER_PASSWORD_MAX_LENGTH = 64;
+
 export const createRegisterSchema = (messages: RegisterSchemaMessages) =>
   z
     .object({
@@ -25,18 +36,22 @@ export const createRegisterSchema = (messages: RegisterSchemaMessages) =>
         .string()
         .trim()
         .min(1, messages.nameRequired)
-        .min(2, messages.nameMinLength),
+        .min(REGISTER_NAME_MIN_LENGTH, messages.nameMinLength)
+        .max(REGISTER_NAME_MAX_LENGTH, messages.nameMaxLength),
 
       username: z
         .string()
         .trim()
         .min(1, messages.usernameRequired)
-        .min(3, messages.usernameMinLength),
+        .min(REGISTER_USERNAME_MIN_LENGTH, messages.usernameMinLength)
+        .max(REGISTER_USERNAME_MAX_LENGTH, messages.usernameMaxLength)
+        .regex(/^[A-Za-z][A-Za-z0-9_]*$/, messages.usernameInvalid),
 
       password: z
         .string()
         .min(1, messages.passwordRequired)
-        .min(8, messages.passwordMinLength)
+        .min(REGISTER_PASSWORD_MIN_LENGTH, messages.passwordMinLength)
+        .max(REGISTER_PASSWORD_MAX_LENGTH, messages.passwordMaxLength)
         .regex(/[a-z]/, messages.passwordLowercase)
         .regex(/[A-Z]/, messages.passwordUppercase)
         .regex(/[0-9]/, messages.passwordNumber)

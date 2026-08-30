@@ -11,7 +11,8 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { clientAuthServices } from '@/apis/services/auth/client';
 import { OnlineOnlyNotice, PasswordField } from '@/components/shared';
@@ -19,6 +20,12 @@ import { ROUTES } from '@/constants';
 import { usePostRequest, usePwa } from '@/hooks';
 import {
   createRegisterSchema,
+  REGISTER_NAME_MAX_LENGTH,
+  REGISTER_NAME_MIN_LENGTH,
+  REGISTER_PASSWORD_MAX_LENGTH,
+  REGISTER_PASSWORD_MIN_LENGTH,
+  REGISTER_USERNAME_MAX_LENGTH,
+  REGISTER_USERNAME_MIN_LENGTH,
   type RegisterFormValues,
 } from './register.schema';
 import type {
@@ -32,18 +39,35 @@ const RegisterModule = () => {
   const tPwa = useTranslations('pwa.onlineOnly');
   const { isOnline } = usePwa();
   const router = useRouter();
+  const [forceMaskedPasswords, setForceMaskedPasswords] = useState(false);
 
   const schema = useMemo(
     () =>
       createRegisterSchema({
         nameRequired: tV('name.required'),
-        nameMinLength: tV('name.minLength'),
+        nameMinLength: tV('name.minLength', {
+          min: REGISTER_NAME_MIN_LENGTH,
+        }),
+        nameMaxLength: tV('name.maxLength', {
+          max: REGISTER_NAME_MAX_LENGTH,
+        }),
 
         usernameRequired: tV('username.required'),
-        usernameMinLength: tV('username.minLength'),
+        usernameMinLength: tV('username.minLength', {
+          min: REGISTER_USERNAME_MIN_LENGTH,
+        }),
+        usernameMaxLength: tV('username.maxLength', {
+          max: REGISTER_USERNAME_MAX_LENGTH,
+        }),
+        usernameInvalid: tV('username.invalid'),
 
         passwordRequired: tV('password.required'),
-        passwordMinLength: tV('password.minLength'),
+        passwordMinLength: tV('password.minLength', {
+          min: REGISTER_PASSWORD_MIN_LENGTH,
+        }),
+        passwordMaxLength: tV('password.maxLength', {
+          max: REGISTER_PASSWORD_MAX_LENGTH,
+        }),
         passwordLowercase: tV('password.lowercase'),
         passwordUppercase: tV('password.uppercase'),
         passwordNumber: tV('password.number'),
@@ -103,9 +127,22 @@ const RegisterModule = () => {
     await registerUser(payload);
   };
 
+  const handleFormSubmit = handleSubmit(onSubmit);
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmitCapture={() => {
+        flushSync(() => {
+          setForceMaskedPasswords(true);
+        });
+      }}
+      onSubmit={(event) => {
+        const submitResult = handleFormSubmit(event);
+        queueMicrotask(() => {
+          setForceMaskedPasswords(false);
+        });
+        return submitResult;
+      }}
       className="flex w-full max-w-115 flex-col gap-6"
       noValidate
     >
@@ -151,6 +188,7 @@ const RegisterModule = () => {
           showPasswordLabel={t('fields.password.show')}
           hidePasswordLabel={t('fields.password.hide')}
           isDisabled={!isOnline || isPending}
+          forceMasked={forceMaskedPasswords}
         />
 
         <PasswordField
@@ -162,6 +200,7 @@ const RegisterModule = () => {
           showPasswordLabel={t('fields.confirmPassword.show')}
           hidePasswordLabel={t('fields.confirmPassword.hide')}
           isDisabled={!isOnline || isPending}
+          forceMasked={forceMaskedPasswords}
         />
       </div>
 
