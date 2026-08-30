@@ -62,6 +62,8 @@ const NotificationsClient = ({
     keepPreviousData: true,
     showErrorToast: false,
     staleTime: 30_000,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   const markReadMutation = usePostRequest<string, { id: string }>({

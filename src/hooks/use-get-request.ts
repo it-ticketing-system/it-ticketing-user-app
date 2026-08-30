@@ -19,6 +19,9 @@ interface UseGetRequestOptions<TResponse> {
   initialData?: TResponse | (() => TResponse | undefined);
   keepPreviousData?: boolean;
   staleTime?: number;
+  refetchOnMount?: boolean;
+  refetchOnReconnect?: boolean;
+  refetchOnWindowFocus?: boolean;
   showErrorToast?: boolean;
   onSuccess?: (data: TResponse) => void | Promise<void>;
   onError?: (error: ApiException) => void | Promise<void>;
@@ -50,6 +53,9 @@ function useGetRequest<TResponse>({
   initialData,
   keepPreviousData = false,
   staleTime,
+  refetchOnMount,
+  refetchOnReconnect,
+  refetchOnWindowFocus,
   showErrorToast = true,
   onSuccess,
   onError,
@@ -76,6 +82,9 @@ function useGetRequest<TResponse>({
     initialData,
     placeholderData: keepPreviousData ? keepPreviousQueryData : undefined,
     staleTime,
+    refetchOnMount,
+    refetchOnReconnect,
+    refetchOnWindowFocus,
   });
 
   useEffect(() => {

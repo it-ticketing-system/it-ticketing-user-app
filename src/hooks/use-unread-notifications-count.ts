@@ -11,6 +11,8 @@ const useUnreadNotificationsCount = () => {
       clientNotificationServices.getUnreadNotificationsCount(signal),
     showErrorToast: false,
     staleTime: 30_000,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   return unreadCountQuery.data ?? 0;

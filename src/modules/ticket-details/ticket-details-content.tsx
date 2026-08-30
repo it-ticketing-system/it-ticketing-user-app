@@ -22,6 +22,8 @@ const TicketDetailsContent = ({
     initialData,
     showErrorToast: false,
     staleTime: 30_000,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   const { ticket, messages } = data ?? initialData;

@@ -30,6 +30,9 @@ const AuthProvider: FCC = ({ children }) => {
   } = useGetRequest({
     queryKey: QUERY_KEYS.auth.me,
     requestFn: clientAuthServices.getMe,
+    staleTime: 60_000,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
     showErrorToast: false,
   });
 

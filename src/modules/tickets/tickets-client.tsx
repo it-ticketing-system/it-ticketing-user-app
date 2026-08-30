@@ -51,6 +51,8 @@ const TicketsClient = ({
     initialData: initialDepartments,
     showErrorToast: false,
     staleTime: 5 * 60_000,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   const ticketsQuery = useGetRequest({
@@ -64,6 +66,8 @@ const TicketsClient = ({
     keepPreviousData: true,
     showErrorToast: false,
     staleTime: 30_000,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   const ticketsError =

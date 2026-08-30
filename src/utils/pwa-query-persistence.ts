@@ -15,6 +15,11 @@ type PersistedQueryCache = {
   queries: PersistedQuery[];
 };
 
+const PERSISTED_AUTH_MAX_AGE_MS = 60 * 60 * 1000;
+const PERSISTED_TICKETS_MAX_AGE_MS = 30 * 60 * 1000;
+const PERSISTED_NOTIFICATIONS_MAX_AGE_MS = 15 * 60 * 1000;
+const PERSISTED_UNREAD_COUNT_MAX_AGE_MS = 5 * 60 * 1000;
+
 const getPersistenceKey = (userId: number) => {
   return `${PWA_QUERY_PERSISTENCE.cacheKeyPrefix}:${userId}:${PWA_QUERY_PERSISTENCE.schemaVersion}`;
 };
@@ -95,6 +100,36 @@ export const isPersistableQueryKey = (queryKey: QueryKey) => {
   return false;
 };
 
+const getPersistedQueryMaxAgeMs = (queryKey: QueryKey) => {
+  if (!Array.isArray(queryKey)) {
+    return PWA_QUERY_PERSISTENCE.maxAgeMs;
+  }
+
+  const [scope, type] = queryKey;
+
+  if (scope === 'auth' && type === 'me') {
+    return PERSISTED_AUTH_MAX_AGE_MS;
+  }
+
+  if (scope === 'lookups' && type === 'departments') {
+    return PWA_QUERY_PERSISTENCE.maxAgeMs;
+  }
+
+  if (scope === 'tickets' && (type === 'list' || type === 'details')) {
+    return PERSISTED_TICKETS_MAX_AGE_MS;
+  }
+
+  if (scope === 'notifications' && type === 'unread-count') {
+    return PERSISTED_UNREAD_COUNT_MAX_AGE_MS;
+  }
+
+  if (scope === 'notifications' && type === 'list') {
+    return PERSISTED_NOTIFICATIONS_MAX_AGE_MS;
+  }
+
+  return PWA_QUERY_PERSISTENCE.maxAgeMs;
+};
+
 export const persistReadableQueries = async (
   userId: number,
   queryClient: QueryClient,
@@ -156,7 +191,17 @@ export const restoreReadableQueries = async (
     return;
   }
 
-  payload.queries.forEach((query) => {
+  const now = Date.now();
+  const validQueries = payload.queries.filter((query) => {
+    return now - query.dataUpdatedAt <= getPersistedQueryMaxAgeMs(query.queryKey);
+  });
+
+  if (validQueries.length === 0) {
+    await removePersistedQueries(userId);
+    return;
+  }
+
+  validQueries.forEach((query) => {
     const currentState = queryClient.getQueryState(query.queryKey);
 
     if (
