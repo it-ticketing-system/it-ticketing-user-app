@@ -10,6 +10,7 @@ import NotificationBadge from './notification-badge';
 import {
   isRouteActive,
   navigationItems,
+  PWA_BOTTOM_NAV_HEIGHT_CLASS,
   PWA_SHELL_CONTAINER_CLASS,
 } from './shared';
 
@@ -24,7 +25,13 @@ const BottomNavigation = () => {
       aria-label={t('navigation')}
       className="border-border bg-surface fixed inset-x-0 bottom-0 z-50 border-t lg:hidden"
     >
-      <div className={cn(PWA_SHELL_CONTAINER_CLASS, 'grid h-16 grid-cols-3')}>
+      <div
+        className={cn(
+          PWA_SHELL_CONTAINER_CLASS,
+          PWA_BOTTOM_NAV_HEIGHT_CLASS,
+          'grid grid-cols-3',
+        )}
+      >
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = isRouteActive(item.href, pathname);

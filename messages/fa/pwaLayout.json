@@ -1,6 +1,5 @@
 {
   "appHeader": {
-    "greeting": "سلام {name}",
     "user": "کاربر",
     "tickets": "تیکت‌ها",
     "notifications": "اعلان‌ها",

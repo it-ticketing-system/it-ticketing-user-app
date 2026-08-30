@@ -6,7 +6,7 @@ type NotificationBadgeProps = {
 };
 
 export const getNotificationBadgeLabel = (count: number) => {
-  return count > 99 ? '99+' : String(count);
+  return count > 99 ? '۹۹+' : new Intl.NumberFormat('fa-IR').format(count);
 };
 
 const NotificationBadge = ({ count, className }: NotificationBadgeProps) => {
@@ -17,7 +17,7 @@ const NotificationBadge = ({ count, className }: NotificationBadgeProps) => {
   return (
     <span
       className={cn(
-        'bg-danger text-danger-foreground border-surface text-badge absolute flex min-w-5 items-center justify-center rounded-full border-2 px-1',
+        'bg-danger text-badge border-surface absolute flex min-w-5 items-center justify-center rounded-full border-2 px-1 text-white',
         className,
       )}
     >

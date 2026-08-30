@@ -52,9 +52,7 @@ const UserMenu = () => {
         </Avatar>
 
         <span className="text-body-sm text-foreground hidden max-w-40 truncate font-medium lg:block">
-          {t('greeting', {
-            name: userName,
-          })}
+          {userName}
         </span>
 
         <ChevronDown

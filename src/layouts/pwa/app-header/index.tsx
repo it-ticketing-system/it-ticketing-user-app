@@ -37,7 +37,7 @@ const PageHeaderAction = ({ action, label }: PageHeaderActionProps) => {
           size: action.size,
           variant: action.variant,
         }),
-        'shrink-0 max-lg:size-10 max-lg:min-w-10 max-lg:px-0',
+        'h-11 shrink-0 justify-center max-lg:size-10 max-lg:min-w-10 max-lg:px-0 lg:min-w-36',
       )}
     >
       <span className="hidden lg:inline">{label}</span>
@@ -65,7 +65,7 @@ const AppHeader = () => {
         className={cn(
           PWA_SHELL_CONTAINER_CLASS,
           PWA_HEADER_HEIGHT_CLASS,
-          'flex items-center justify-between gap-3',
+          'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 lg:grid-cols-[minmax(14rem,1fr)_auto_minmax(14rem,1fr)]',
         )}
       >
         <Link
@@ -81,18 +81,12 @@ const AppHeader = () => {
                 ? tPageHeader(`${pageHeader.messageKey}.title`)
                 : tCommon('brand.appName')}
             </span>
-
-            {pageHeader ? (
-              <span className="text-caption text-muted lg:text-body-sm mt-0.5 hidden max-w-[44rem] truncate sm:block">
-                {tPageHeader(`${pageHeader.messageKey}.description`)}
-              </span>
-            ) : null}
           </span>
         </Link>
 
         <nav
           aria-label={t('mainNavigation')}
-          className="hidden h-full items-center gap-6 lg:flex"
+          className="hidden h-full items-center justify-center gap-6 lg:flex"
         >
           {navigationItems.map((item) => {
             const isActive = isRouteActive(item.href, pathname);
@@ -119,13 +113,15 @@ const AppHeader = () => {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-1 lg:gap-3">
-          {pageHeader?.action ? (
-            <PageHeaderAction
-              action={pageHeader.action}
-              label={tPageHeader(`${pageHeader.messageKey}.actionText`)}
-            />
-          ) : null}
+        <div className="flex shrink-0 items-center justify-end gap-1 lg:justify-self-end lg:gap-3">
+          <div className="flex h-11 min-w-10 shrink-0 items-center justify-end lg:min-w-36">
+            {pageHeader?.action ? (
+              <PageHeaderAction
+                action={pageHeader.action}
+                label={tPageHeader(`${pageHeader.messageKey}.actionText`)}
+              />
+            ) : null}
+          </div>
 
           <NotificationLink />
           <UserMenu />

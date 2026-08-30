@@ -4,6 +4,7 @@ import { ROUTES } from '@/constants';
 export const PWA_SHELL_CONTAINER_CLASS =
   'mx-auto w-full max-w-[90rem] px-4 sm:px-5 md:px-6 lg:px-8';
 export const PWA_HEADER_HEIGHT_CLASS = 'h-16 lg:h-18';
+export const PWA_BOTTOM_NAV_HEIGHT_CLASS = 'h-16';
 export const PWA_CONTENT_MIN_HEIGHT_CLASS =
   'min-h-[calc(100dvh-4rem)] lg:min-h-[calc(100dvh-4.5rem)]';
 
