@@ -1,12 +1,7 @@
 'use client';
 
 import { Button, Popover } from '@heroui/react';
-import {
-  CalendarDays,
-  ChevronDown,
-  LoaderCircle,
-  RotateCcw,
-} from 'lucide-react';
+import { CalendarDays, ChevronDown, RotateCcw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ICON_SIZE_CLASS } from '@/constants';
 import { useMediaQuery } from '@/hooks';
@@ -21,14 +16,13 @@ import {
 } from './ticket-filters.shared';
 import TicketMobileFilters from './ticket-mobile-filters';
 import TicketSearchControl from './ticket-search-control';
-import type { IDepartmentLookup, TicketStatus } from '@/models';
+import type { IDepartmentLookup } from '@/models';
 
 type MyTicketsFiltersProps = {
   departments: IDepartmentLookup[];
   value: TicketFiltersValue;
   isPending: boolean;
   onChange: (patch: TicketFiltersPatch) => void;
-  onReset: () => void;
 };
 
 const MyTicketsFilters = ({
@@ -36,13 +30,13 @@ const MyTicketsFilters = ({
   value,
   isPending,
   onChange,
-  onReset,
 }: MyTicketsFiltersProps) => {
   const t = useTranslations('tickets.filters');
   const { isDesktop } = useMediaQuery();
   const { search, status, department, from, to } = value;
 
-  const statusOptions: readonly SelectOption<TicketStatus>[] = [
+  const statusOptions: readonly SelectOption<string>[] = [
+    { value: '', label: t('status.all') },
     { value: 'open', label: t('statuses.open') },
     { value: 'inProgress', label: t('statuses.inProgress') },
     { value: 'waitingUser', label: t('statuses.waitingUser') },
@@ -50,17 +44,21 @@ const MyTicketsFilters = ({
     { value: 'closed', label: t('statuses.closed') },
   ];
 
-  const departmentOptions = departments.map((item) => ({
-    value: item.id,
-    label: item.name,
-  }));
+  const departmentOptions = [
+    {
+      value: '',
+      label: t('department.all'),
+    },
+    ...departments.map((item) => ({
+      value: item.id,
+      label: item.name,
+    })),
+  ];
 
   const activeFilterCount =
     Number(Boolean(status)) +
     Number(Boolean(department)) +
     Number(Boolean(from || to));
-
-  const hasActiveFilters = Boolean(search) || activeFilterCount > 0;
 
   const handleStatusChange = (value: string) => {
     onChange(createTicketFilterPatch('status', value));
@@ -124,7 +122,6 @@ const MyTicketsFilters = ({
           <div className="border-border bg-primary-50 h-11 rounded-md border" />
           <div className="border-border bg-primary-50 h-11 rounded-md border" />
           <div className="border-border bg-primary-50 h-11 rounded-md border" />
-          <div className="border-border bg-primary-50 h-11 rounded-md border" />
         </section>
       </>
     );
@@ -155,7 +152,7 @@ const MyTicketsFilters = ({
       {isDesktop && (
         <section
           aria-label={t('sectionAriaLabel')}
-          className="border-border bg-surface grid gap-4 rounded-xl border p-4 shadow-sm lg:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_160px_160px_176px_112px]"
+          className="border-border bg-surface grid gap-4 rounded-xl border p-4 shadow-sm lg:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_160px_160px_176px]"
         >
           <div className="min-w-0 lg:col-span-2 xl:col-span-1">
             {searchControl}
@@ -250,24 +247,6 @@ const MyTicketsFilters = ({
             </Popover.Content>
           </Popover>
 
-          <Button
-            variant="outline"
-            size="md"
-            isDisabled={!hasActiveFilters}
-            isPending={isPending}
-            onPress={onReset}
-            className="border-field-border bg-surface h-11 w-full rounded-md"
-          >
-            {isPending ? (
-              <LoaderCircle
-                aria-hidden="true"
-                className={cn(ICON_SIZE_CLASS.sm, 'animate-spin')}
-              />
-            ) : (
-              <RotateCcw aria-hidden="true" className={ICON_SIZE_CLASS.sm} />
-            )}
-            {t('actions.reset')}
-          </Button>
         </section>
       )}
     </>

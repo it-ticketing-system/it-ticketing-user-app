@@ -19,17 +19,19 @@
     },
     "search": {
       "ariaLabel": "جست‌وجو در تیکت‌ها",
-      "placeholder": "جست‌وجو در تیکت‌ها...",
+      "placeholder": "جستجو بر اساس شماره تیکت یا عنوان",
       "clearAriaLabel": "پاک کردن جست‌وجو"
     },
     "status": {
       "ariaLabel": "فیلتر بر اساس وضعیت",
       "label": "وضعیت",
+      "all": "همه",
       "placeholder": "همه وضعیت‌ها"
     },
     "department": {
       "ariaLabel": "فیلتر بر اساس دپارتمان",
       "label": "دپارتمان",
+      "all": "همه",
       "placeholder": "همه دپارتمان‌ها"
     },
     "dateRange": {
@@ -42,17 +44,13 @@
       "toPrefix": "تا",
       "clear": "پاک کردن بازه"
     },
-    "actions": {
-      "reset": "پاک کردن"
-    },
     "mobile": {
       "openAriaLabel": "باز کردن فیلترها",
       "dialogAriaLabel": "فیلتر تیکت‌ها",
       "heading": "فیلتر تیکت‌ها",
       "description": "فیلترهای موردنظر را انتخاب و اعمال کنید.",
       "cancel": "انصراف",
-      "apply": "اعمال فیلترها",
-      "reset": "پاک کردن"
+      "apply": "اعمال فیلترها"
     }
   },
 

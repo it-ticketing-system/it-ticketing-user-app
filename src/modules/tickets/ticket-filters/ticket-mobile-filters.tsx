@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Modal } from '@heroui/react';
-import { Filter, LoaderCircle, RotateCcw } from 'lucide-react';
+import { Filter, LoaderCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { ICON_SIZE_CLASS } from '@/constants';
@@ -57,10 +57,6 @@ const TicketMobileFilters = ({
     });
 
     setIsOpen(true);
-  };
-
-  const resetDraft = () => {
-    setDraft(EMPTY_FILTER_DRAFT);
   };
 
   const applyFilters = (close: () => void) => {
@@ -173,19 +169,6 @@ const TicketMobileFilters = ({
 
                   <Modal.Footer className="border-separator border-t pt-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
                     <div className="flex w-full items-center justify-between gap-3">
-                      <Button
-                        variant="ghost"
-                        size="md"
-                        onPress={resetDraft}
-                        className="text-danger h-11 px-2"
-                      >
-                        <RotateCcw
-                          aria-hidden="true"
-                          className={ICON_SIZE_CLASS.sm}
-                        />
-                        {t('mobile.reset')}
-                      </Button>
-
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"

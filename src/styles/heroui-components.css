@@ -186,12 +186,13 @@
     }
 
     .select__popover {
-      @apply border-border bg-surface rounded-lg border p-1 shadow-lg;
+      @apply border-border bg-surface rounded-lg border p-1 text-right shadow-lg;
 
       min-width: var(--trigger-width);
 
       [data-slot='list-box'] {
-        @apply max-h-64 overflow-y-auto p-0 outline-none;
+        @apply max-h-64 overflow-y-auto p-0 text-right outline-none;
+        direction: rtl;
       }
 
       [data-slot='list-box-item'] {

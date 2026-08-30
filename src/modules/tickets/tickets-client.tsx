@@ -14,7 +14,6 @@ import { TicketsTable, type TicketTableData } from './ticket-table';
 import {
   areTicketFiltersEqual,
   createMyTicketsParams,
-  FILTER_QUERY_KEYS,
   parseTicketFilters,
 } from './tickets-query';
 import type { ApiRequestError } from '@/apis/core/api-error';
@@ -33,7 +32,7 @@ const TicketsClient = ({
   initialTickets,
   initialTicketsError,
 }: TicketsClientProps) => {
-  const { getQuery, setQuery, updateQueries, removeQueries } = useQueryState();
+  const { getQuery, setQuery, updateQueries } = useQueryState();
 
   const filters = parseTicketFilters({
     search: getQuery('search') ?? undefined,
@@ -108,25 +107,6 @@ const TicketsClient = ({
     });
   };
 
-  const resetFilters = () => {
-    if (
-      !filters.search &&
-      !filters.status &&
-      !filters.department &&
-      !filters.from &&
-      !filters.to &&
-      filters.page === 1
-    ) {
-      return;
-    }
-
-    removeQueries(FILTER_QUERY_KEYS, {
-      history: 'replace',
-      scroll: false,
-      strategy: 'native',
-    });
-  };
-
   const changePage = (nextPage: number) => {
     setQuery('page', nextPage === 1 ? null : nextPage, {
       history: 'push',
@@ -153,7 +133,6 @@ const TicketsClient = ({
           value={filterValue}
           isPending={ticketsQuery.isFetching || departmentsQuery.isFetching}
           onChange={changeFilters}
-          onReset={resetFilters}
         />
       }
     />
